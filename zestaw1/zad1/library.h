@@ -22,5 +22,4 @@ void delete_array(struct wrapped_arr *arr);
 
 char *find_closest(struct wrapped_arr *arr, int value);
 
-
 #endif //SYSOPY_LIBRARY_H
