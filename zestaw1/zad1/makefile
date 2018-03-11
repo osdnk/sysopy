@@ -12,6 +12,22 @@ clean:
 	rm -f *.o
 
 zad3_static:
-    make static
-    gcc -o test main.c library.a -std=c11 -I . -Wall -ggdb
-    # works :)
+	make static
+	gcc -o test main.c library.a -std=c11 -I . -Wall -ggdb
+	# works :)
+	./test  620000 11 static  find 30000 remove
+	./test  620000 33 static  change 20000 change 2000
+	./test  600000 12 static  change_alt 123123 change 123123
+	./test  620000 111 static  change 1000 remove
+
+zad3_dynamic:
+	make shared
+	gcc -o test main_dynamic.c -std=c11 -I . -Wall -ggdb
+	# works :)
+	./test  620000 11 static  find 30000 remove
+	./test  620000 33 static  change 20000 change 2000
+	./test  600000 12 static  change_alt 123123 change 123123
+	./test  620000 111 static  change 1000 remove
+
+
+

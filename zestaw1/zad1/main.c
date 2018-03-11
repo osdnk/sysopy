@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
     printf("%lf   ", calculate_time(tms_time[0]->tms_utime, tms_time[1]->tms_utime));
 
     printf("%lf ", calculate_time(tms_time[0]->tms_stime, tms_time[1]->tms_stime));
-    printf("\n\n\n");
+    printf("\n");
 
     if (argc >= 5) {
 
@@ -149,7 +149,7 @@ int main(int argc, char **argv) {
                                         tms_time[3]->tms_utime + tms_time[3]->tms_stime));
         printf("%lf   ", calculate_time(tms_time[2]->tms_utime, tms_time[3]->tms_utime));
         printf("%lf ", calculate_time(tms_time[2]->tms_stime, tms_time[3]->tms_stime));
-        printf("\n\n\n");
+        printf("\n");
     }
 
     if (argc >= 7) {
@@ -164,7 +164,7 @@ int main(int argc, char **argv) {
                                         tms_time[5]->tms_utime + tms_time[5]->tms_stime));
         printf("%lf   ", calculate_time(tms_time[4]->tms_utime, tms_time[5]->tms_utime));
         printf("%lf ", calculate_time(tms_time[4]->tms_stime, tms_time[5]->tms_stime));
-        printf("\n\n\n");
+        printf("\n");
     }
 
 
