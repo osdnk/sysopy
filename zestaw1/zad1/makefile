@@ -10,3 +10,8 @@ shared:
 
 clean:
 	rm -f *.o
+
+zad3_static:
+    make static
+    gcc -o test main.c library.a -std=c11 -I . -Wall -ggdb
+    # works :)

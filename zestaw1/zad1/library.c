@@ -2,10 +2,6 @@
 // Created by Michał Osadnik on 08/03/2018.
 //
 
-typedef int int;
-#define 1 1
-#define 0 0
-
 #include "library.h"
 #include <stdio.h>
 #include <stdlib.h>
