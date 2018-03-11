@@ -79,18 +79,22 @@ void exec_operation(char *arg, int param, int block_size, struct wrapped_arr *ar
 }
 
 int main(int argc, char **argv) {
+    if (argc < 4) {
+        printf("Meh, wrong arguments. Give me please: number of blocks, blocksize, mode of alloc and then list of job (max 2)!");
+        return 1;
+    }
     srand((unsigned int) time(NULL));
     int array_size = (int) strtol(argv[1], NULL, 10);
     int block_size = (int) strtol(argv[2], NULL, 10);
 
     int is_static;
-    if (strcmp(argv[3], "dynamic")) {
+    if (strcmp(argv[3], "dynamic") == 0) {
         is_static = 0;
-    } else if (strcmp(argv[3], "static")) {
+    } else if (strcmp(argv[3], "static") == 0) {
         is_static = 1;
     } else {
         printf("Wrong type of allocation!");
-        return 0;
+        return 1;
     }
 
     char *first_operation;

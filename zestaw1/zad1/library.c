@@ -9,7 +9,7 @@
 #include <limits.h>
 
 
-char *global_arr[10000];
+char *global_arr[1000000];
 
 
 struct wrapped_arr *create(int number_of_blocks, int is_static) {
