@@ -75,9 +75,3 @@ char *find_closest(struct wrapped_arr *arr, int value) {
     }
     return res;
 }
-
-
-
-
-
-
