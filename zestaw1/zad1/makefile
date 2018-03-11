@@ -31,7 +31,7 @@ zad3_shared:
 
 
 tests:
-    # static
+	# static
 	./test  30 11 static
 	./test  620000 11 static  find 30000 remove
 	./test  620000 33 static  change 20000 change 2000
