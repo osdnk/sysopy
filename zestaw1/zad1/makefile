@@ -13,19 +13,19 @@ clean:
 
 zad3_static:
 	make static
-	gcc -o test main.c library.a -std=c11 -I . -Wall -ggdb
+	gcc -o test main.c library.a -std=c11 -I . -Wall -ggdb -O$(Olevel)
 	# works :)
 	make tests
 
 zad3_dynamic:
 	make shared
-	gcc -o test main_dynamic.c -std=c11 -I . -Wall -ggdb
+	gcc -o test main_dynamic.c -std=c11 -I . -Wall -ggdb -O$(Olevel)
 	# works :)
 	make tests
 
 zad3_shared:
 	make shared
-	gcc -o test main.c -L. library.so -std=c11 -I . -Wall -ggdb
+	gcc -o test main.c -L. library.so -std=c11 -I . -Wall -ggdb -O$(Olevel)
 	# works :)
 	make tests
 
