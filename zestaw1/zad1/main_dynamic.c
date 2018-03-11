@@ -13,10 +13,11 @@
 
 
 void *dl_handle;
-typedef void* (*arbitrary)();
+
+typedef void *(*arbitrary)();
 
 
-char* generate_random_string(int max_size){
+char *generate_random_string(int max_size) {
     if (max_size < 1) return NULL;
     char *base = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     size_t dict_len = strlen(base);
@@ -29,70 +30,70 @@ char* generate_random_string(int max_size){
     return res;
 }
 
-void fil_array(struct wrapped_arr * arr, int block_size){
+void fil_array(struct wrapped_arr *arr, int block_size) {
     for (int i = 0; i < arr->number_of_blocks; i++) {
-        char* randomString = generate_random_string(block_size);
+        char *randomString = generate_random_string(block_size);
         arbitrary fadd_block_at_index;
-        *(void **)(&fadd_block_at_index) = dlsym(dl_handle, "add_block_at_index");
+        *(void **) (&fadd_block_at_index) = dlsym(dl_handle, "add_block_at_index");
         fadd_block_at_index(arr, randomString, i);
 
     }
 }
 
-void add_specific_number_of_blocks(struct wrapped_arr * arr, int number, int start_index, int block_size){
+void add_specific_number_of_blocks(struct wrapped_arr *arr, int number, int start_index, int block_size) {
     for (int i = 0; i < number; i++) {
         char *block = generate_random_string(block_size);
         arbitrary fadd_block_at_index;
-        *(void **)(&fadd_block_at_index) = dlsym(dl_handle, "add_block_at_index");
+        *(void **) (&fadd_block_at_index) = dlsym(dl_handle, "add_block_at_index");
         fadd_block_at_index(arr, block, i + start_index);
     }
 }
 
-void remove_specific_number_of_blocks(struct wrapped_arr * arr, int number, int start_index){
+void remove_specific_number_of_blocks(struct wrapped_arr *arr, int number, int start_index) {
     for (int i = 0; i < number; i++) {
         arbitrary fdelete_block_at_index;
-        *(void **)(&fdelete_block_at_index) = dlsym(dl_handle, "delete_block_at_index");
+        *(void **) (&fdelete_block_at_index) = dlsym(dl_handle, "delete_block_at_index");
         fdelete_block_at_index(arr, i + start_index);
     }
 }
 
-void delete_then_add(struct wrapped_arr * arr, int number, int block_size){
+void delete_then_add(struct wrapped_arr *arr, int number, int block_size) {
     remove_specific_number_of_blocks(arr, number, 0);
     add_specific_number_of_blocks(arr, number, 0, block_size);
 }
 
-void alt_delete_then_add(struct wrapped_arr * arr, int number, int block_size){
+void alt_delete_then_add(struct wrapped_arr *arr, int number, int block_size) {
     for (int i = 0; i < number; i++) {
         arbitrary fdelete_block_at_index;
-        *(void **)(&fdelete_block_at_index) = dlsym(dl_handle, "delete_block_at_index");
+        *(void **) (&fdelete_block_at_index) = dlsym(dl_handle, "delete_block_at_index");
         fdelete_block_at_index(arr, i);
         arbitrary fadd_block_at_index;
-        *(void **)(&fadd_block_at_index) = dlsym(dl_handle, "add_block_at_index");
+        *(void **) (&fadd_block_at_index) = dlsym(dl_handle, "add_block_at_index");
         fadd_block_at_index(arr, generate_random_string(block_size), i);
     }
 }
 
-double calculate_time(clock_t start, clock_t end){
-    return (double)(  end -  start)  / sysconf(_SC_CLK_TCK);
+double calculate_time(clock_t start, clock_t end) {
+    return (double) (end - start) / sysconf(_SC_CLK_TCK);
 }
 
-void exec_operation (char * arg, int param, int block_size, struct wrapped_arr * arr) {
+void exec_operation(char *arg, int param, int block_size, struct wrapped_arr *arr) {
 
 
-    if (strcmp(arg, "change")==0) {
+    if (strcmp(arg, "change") == 0) {
         delete_then_add(arr, param, block_size);
 
-    } else if (strcmp(arg, "change_alt")==0) {
+    } else if (strcmp(arg, "change_alt") == 0) {
         alt_delete_then_add(arr, param, block_size);
 
-    } else if (strcmp(arg, "find")==0) {
+    } else if (strcmp(arg, "find") == 0) {
         arbitrary ffind_closest;
-        *(void **)(&ffind_closest) = dlsym(dl_handle, "find_closest");
+        *(void **) (&ffind_closest) = dlsym(dl_handle, "find_closest");
         ffind_closest(arr, block_size);
 
-    } else if (strcmp(arg, "remove")==0) {
+    } else if (strcmp(arg, "remove") == 0) {
         arbitrary fdelete_array;
-        *(void **)(&fdelete_array) = dlsym(dl_handle, "delete_array");
+        *(void **) (&fdelete_array) = dlsym(dl_handle, "delete_array");
         fdelete_array(arr);
     }
 
@@ -100,9 +101,9 @@ void exec_operation (char * arg, int param, int block_size, struct wrapped_arr *
 
 int main(int argc, char **argv) {
 
-    dl_handle = dlopen( "./library.so", RTLD_LAZY );
+    dl_handle = dlopen("./library.so", RTLD_LAZY);
     if (!dl_handle) {
-        printf( "!!! %s\n", dlerror() );
+        printf("!!! %s\n", dlerror());
         return 0;
     }
 
@@ -114,16 +115,16 @@ int main(int argc, char **argv) {
     int is_static;
     if (strcmp(argv[3], "dynamic")) {
         is_static = 0;
-    } else if (strcmp(argv[3], "static")){
+    } else if (strcmp(argv[3], "static")) {
         is_static = 1;
     } else {
         printf("Wrong type of allocation!");
         return 0;
     }
 
-    char * first_operation;
+    char *first_operation;
     int first_arg = -1;
-    char * second_operation;
+    char *second_operation;
     int second_arg = -1;
     if (argc >= 5) {
         first_operation = argv[4];
@@ -138,20 +139,19 @@ int main(int argc, char **argv) {
         second_arg = (int) strtol(argv[7], NULL, 10);
     }
 
-    struct tms** tms_time = malloc(6 * sizeof(struct tms*));
+    struct tms **tms_time = malloc(6 * sizeof(struct tms *));
     for (int i = 0; i < 6; i++) {
-       tms_time[i] = (struct tms*) malloc(sizeof(struct tms*));
+        tms_time[i] = (struct tms *) malloc(sizeof(struct tms *));
     }
 
     printf("   Real      User      System\n");
 
     arbitrary fcreate;
-    *(void **)(&fcreate) = dlsym(dl_handle, "create");
+    *(void **) (&fcreate) = dlsym(dl_handle, "create");
 
 
-    struct wrapped_arr * arr;
+    struct wrapped_arr *arr;
     arr = fcreate(array_size, is_static);
-
 
 
     times(tms_time[0]);
@@ -161,9 +161,9 @@ int main(int argc, char **argv) {
     times(tms_time[1]);
 
 
-
     printf("%s", "create\n");
-    printf("%lf   ", calculate_time(tms_time[0]->tms_utime + tms_time[0]->tms_stime, tms_time[1]->tms_utime + tms_time[1]->tms_stime));
+    printf("%lf   ", calculate_time(tms_time[0]->tms_utime + tms_time[0]->tms_stime,
+                                    tms_time[1]->tms_utime + tms_time[1]->tms_stime));
     printf("%lf   ", calculate_time(tms_time[0]->tms_utime, tms_time[1]->tms_utime));
 
     printf("%lf ", calculate_time(tms_time[0]->tms_stime, tms_time[1]->tms_stime));
@@ -177,7 +177,8 @@ int main(int argc, char **argv) {
 
 
         printf("%s %s", first_operation, " \n");
-        printf("%lf   ", calculate_time(tms_time[2]->tms_utime + tms_time[2]->tms_stime, tms_time[3]->tms_utime + tms_time[3]->tms_stime));
+        printf("%lf   ", calculate_time(tms_time[2]->tms_utime + tms_time[2]->tms_stime,
+                                        tms_time[3]->tms_utime + tms_time[3]->tms_stime));
         printf("%lf   ", calculate_time(tms_time[2]->tms_utime, tms_time[3]->tms_utime));
         printf("%lf ", calculate_time(tms_time[2]->tms_stime, tms_time[3]->tms_stime));
         printf("\n\n\n");
@@ -191,13 +192,12 @@ int main(int argc, char **argv) {
         times(tms_time[5]);
 
         printf("%s %s", second_operation, " \n");
-        printf("%lf   ", calculate_time(tms_time[4]->tms_utime + tms_time[4]->tms_stime, tms_time[5]->tms_utime + tms_time[5]->tms_stime));
+        printf("%lf   ", calculate_time(tms_time[4]->tms_utime + tms_time[4]->tms_stime,
+                                        tms_time[5]->tms_utime + tms_time[5]->tms_stime));
         printf("%lf   ", calculate_time(tms_time[4]->tms_utime, tms_time[5]->tms_utime));
         printf("%lf ", calculate_time(tms_time[4]->tms_stime, tms_time[5]->tms_stime));
         printf("\n\n\n");
     }
-
-
 
 
     return 0;

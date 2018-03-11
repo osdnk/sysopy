@@ -13,11 +13,11 @@ typedef int int;
 #include <limits.h>
 
 
-char* global_arr[10000];
+char *global_arr[10000];
 
 
-struct wrapped_arr * create(int number_of_blocks, int is_static) {
-    if (number_of_blocks<0) {
+struct wrapped_arr *create(int number_of_blocks, int is_static) {
+    if (number_of_blocks < 0) {
         return NULL;
     }
     struct wrapped_arr *res = malloc(sizeof(struct wrapped_arr));
@@ -26,13 +26,13 @@ struct wrapped_arr * create(int number_of_blocks, int is_static) {
     if (is_static) {
         res->arr = global_arr;
     } else {
-        char **arr = (char **) calloc(number_of_blocks, sizeof(char*));
+        char **arr = (char **) calloc(number_of_blocks, sizeof(char *));
         res->arr = arr;
     }
     return res;
 }
 
-void add_block_at_index(struct wrapped_arr * arr, char *block, int index) {
+void add_block_at_index(struct wrapped_arr *arr, char *block, int index) {
     if (index >= arr->number_of_blocks || index < 0) {
         return;
     }
@@ -40,8 +40,8 @@ void add_block_at_index(struct wrapped_arr * arr, char *block, int index) {
     strcpy(arr->arr[index], block);
 }
 
-void delete_block_at_index(struct wrapped_arr * arr, int index){
-    if(arr == NULL || arr->arr[index] == NULL) {
+void delete_block_at_index(struct wrapped_arr *arr, int index) {
+    if (arr == NULL || arr->arr[index] == NULL) {
         return;
     }
     free(arr->arr[index]);
@@ -49,7 +49,7 @@ void delete_block_at_index(struct wrapped_arr * arr, int index){
 
 }
 
-void delete_array(struct wrapped_arr * arr){
+void delete_array(struct wrapped_arr *arr) {
     for (int i = 0; i < arr->number_of_blocks; i++) {
         if (arr->arr[i] != NULL) {
             free(arr->arr[i]);
@@ -59,19 +59,19 @@ void delete_array(struct wrapped_arr * arr){
 
 int get_int_block(char *block) {
     int res = 0;
-    for(int i = 0; i < sizeof(block); i ++)
-        res += (int)block[i];
+    for (int i = 0; i < sizeof(block); i++)
+        res += (int) block[i];
     return res;
 }
 
-char *find_closest(struct wrapped_arr * arr, int value) {
-    char* res = NULL;
+char *find_closest(struct wrapped_arr *arr, int value) {
+    char *res = NULL;
     int min_diff = INT_MAX;
-    for(int i = 0; i < arr->number_of_blocks; i++){
-        char* block = arr->arr[i];
-        if(block != NULL){
+    for (int i = 0; i < arr->number_of_blocks; i++) {
+        char *block = arr->arr[i];
+        if (block != NULL) {
             int diff = abs(get_int_block(block) - value);
-            if(min_diff>diff){
+            if (min_diff > diff) {
                 min_diff = diff;
                 res = block;
             }
