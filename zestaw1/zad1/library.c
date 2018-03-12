@@ -55,7 +55,7 @@ void delete_array(struct wrapped_arr *arr) {
 
 int get_int_block(char *block) {
     int res = 0;
-    for (int i = 0; i < sizeof(block); i++)
+    for (int i = 0; i < strlen(block); i++)
         res += (int) block[i];
     return res;
 }

@@ -23,9 +23,10 @@ char *generate_random_string(int max_size) {
     size_t dict_len = strlen(base);
     char *res = (char *) malloc((max_size) * sizeof(char));
 
-    for (int i = 0; i < max_size; i++) {
+    for (int i = 0; i < max_size-1; i++) {
         res[i] = base[rand() % dict_len];
     }
+    res[max_size-1] = '\0';
 
     return res;
 }
