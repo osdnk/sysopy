@@ -141,6 +141,7 @@ int main(int argc, char **argv) {
     }
 
     struct tms **tms_time = malloc(6 * sizeof(struct tms *));
+    clock_t real_time[6];
     for (int i = 0; i < 6; i++) {
         tms_time[i] = (struct tms *) malloc(sizeof(struct tms *));
     }
@@ -155,16 +156,15 @@ int main(int argc, char **argv) {
     arr = fcreate(array_size, is_static);
 
 
-    times(tms_time[0]);
+    real_time[0] = times(tms_time[0]);
 
     fil_array(arr, block_size);
 
-    times(tms_time[1]);
+    real_time[1] = times(tms_time[1]);
 
 
     printf("%s", "create\n");
-    printf("%lf   ", calculate_time(tms_time[0]->tms_utime + tms_time[0]->tms_stime,
-                                    tms_time[1]->tms_utime + tms_time[1]->tms_stime));
+    printf("%lf   ", calculate_time(real_time[0], real_time[1]));
     printf("%lf   ", calculate_time(tms_time[0]->tms_utime, tms_time[1]->tms_utime));
 
     printf("%lf ", calculate_time(tms_time[0]->tms_stime, tms_time[1]->tms_stime));
@@ -172,14 +172,13 @@ int main(int argc, char **argv) {
 
     if (argc >= 5) {
 
-        times(tms_time[2]);
+        real_time[2] = times(tms_time[2]);
         exec_operation(first_operation, first_arg, block_size, arr);
-        times(tms_time[3]);
+        real_time[3] = times(tms_time[3]);
 
 
         printf("%s %s", first_operation, " \n");
-        printf("%lf   ", calculate_time(tms_time[2]->tms_utime + tms_time[2]->tms_stime,
-                                        tms_time[3]->tms_utime + tms_time[3]->tms_stime));
+        printf("%lf   ", calculate_time(real_time[2], real_time[3]));
         printf("%lf   ", calculate_time(tms_time[2]->tms_utime, tms_time[3]->tms_utime));
         printf("%lf ", calculate_time(tms_time[2]->tms_stime, tms_time[3]->tms_stime));
         printf("\n");
@@ -187,14 +186,13 @@ int main(int argc, char **argv) {
 
     if (argc >= 7) {
 
-        times(tms_time[4]);
+        real_time[4] = times(tms_time[4]);
 
         exec_operation(second_operation, 300000, block_size, arr);
-        times(tms_time[5]);
+        real_time[5] = times(tms_time[5]);
 
         printf("%s %s", second_operation, " \n");
-        printf("%lf   ", calculate_time(tms_time[4]->tms_utime + tms_time[4]->tms_stime,
-                                        tms_time[5]->tms_utime + tms_time[5]->tms_stime));
+        printf("%lf   ", calculate_time(real_time[4], real_time[5]));
         printf("%lf   ", calculate_time(tms_time[4]->tms_utime, tms_time[5]->tms_utime));
         printf("%lf ", calculate_time(tms_time[4]->tms_stime, tms_time[5]->tms_stime));
         printf("\n");

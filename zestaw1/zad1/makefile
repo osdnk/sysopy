@@ -1,31 +1,34 @@
+CC = gcc -Wall -std=c11 -ggdb
+
+
 all: static shared clean
 
 static:
-	gcc -c -Wall library.c
+	$(CC) -c library.c
 	ar rcs library.a library.o
 
 shared:
-	gcc -c -Wall -fPIC library.c
-	gcc -shared -fPIC -o library.so library.o
+	$(CC) -c -fPIC library.c
+	$(CC) -shared -fPIC -o library.so library.o
 
 clean:
 	rm -f *.o
 
 zad3_static:
 	make static
-	gcc -o test main.c library.a -std=c11 -I . -Wall -ggdb -O$(Olevel)
+	$(CC) -o test main.c library.a -I . -O$(Olevel)
 	# works :)
 	make tests
 
 zad3_dynamic:
 	make shared
-	gcc -o test main_dynamic.c -std=c11 -I . -Wall -ggdb -O$(Olevel)
+	$(CC) -o test main_dynamic.c -I . -O$(Olevel)
 	# works :)
 	make tests
 
 zad3_shared:
 	make shared
-	gcc -o test main.c -L. library.so -std=c11 -I . -Wall -ggdb -O$(Olevel)
+	$(CC) -o test main.c -L. library.so -I . -O$(Olevel)
 	# works :)
 	make tests
 
