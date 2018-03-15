@@ -15,15 +15,17 @@ clean:
 	rm -f *.o
 
 
-zad2_dynamic:
-	make shared
-	$(CC) -o test main_dynamic.c -I . -O$(Olevel)
+zad2_static:
+	make static
+	$(CC) -o test main.c library.a -I .
 	# works :)
+	make tests
 
 zad2_shared:
 	make shared
-	$(CC) -o test main.c -L. library.so -I . -O$(Olevel)
+	$(CC) -o test main.c -L. library.so -I .
 	# works :)
+	make tests
 
 tests:
 	# static
