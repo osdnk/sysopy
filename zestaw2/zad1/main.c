@@ -8,22 +8,22 @@
 #define sys_mode 1
 #define lib_mode 0
 
-int generate(char *path, int amount, int len){
+int generate(char *path, int amount, int len) {
     FILE *file = fopen(path, "w+");
     FILE *rnd = fopen("/dev/random", "r");
     char *tmp = malloc(len * sizeof(char) + 1);
-    for (int i = 0; i < amount; ++i){
-        if(fread(tmp, sizeof(char), (size_t) len+1, rnd) != len+1) {
+    for (int i = 0; i < amount; ++i) {
+        if (fread(tmp, sizeof(char), (size_t) len + 1, rnd) != len + 1) {
             return 1;
         }
 
-        for(int j = 0; j < len; ++j) {
+        for (int j = 0; j < len; ++j) {
             tmp[j] = (char) (abs(tmp[j]) % 25 + 65);
         }
 
         tmp[len] = 10;
 
-        if(fwrite(tmp, sizeof(char), (size_t) len+1, file) != len+1) {
+        if (fwrite(tmp, sizeof(char), (size_t) len + 1, file) != len + 1) {
             return 1;
         }
     }
@@ -34,16 +34,61 @@ int generate(char *path, int amount, int len){
 };
 
 
-
 void generate_wrapper(char *path, int amount, int len) {
-    if (generate(path, amount, len) != 0 ) {
+    if (generate(path, amount, len) != 0) {
         printf("%s", "Oops! Something went with generating 🦖");
-    } 
+    }
 
 }
 
+int lib_sort(char *path, int amount, int len) {
+    printf("%d", amount);
+    printf("%d", len);
+    FILE *file = fopen(path, "r+");
+    char *reg1 = malloc((len + 1) * sizeof(char));
+    char *reg2 = malloc((len + 1) * sizeof(char));
+    long int offset = (long int) ((len + 1) * sizeof(char));
+    int j;
+
+    for (int i = 0; i < amount; i++) {
+        fseek(file, i * offset, 0);
+        if (fread(reg1, sizeof(char), (size_t) (len + 1), file) != (len + 1)) {
+            return 1;
+        }
+
+        for (j = i - 1; j >= 0; j--) {
+            fseek(file, j * offset, 0);
+            if (fread(reg2, sizeof(char), (size_t) (len + 1), file) != (len + 1)) {
+                return 1;
+            }
+            if (reg1[0] >= reg2[0]) {
+                break;
+            }
+            if (fwrite(reg2, sizeof(char), (size_t) (len + 1), file) != (len + 1)) {
+                return 1;
+            }
+        }
+        fseek(file, (j + 1) * offset, 0);
+        if (j != -1 ) {
+            if (fwrite(reg1, sizeof(char), (size_t)(len + 1), file) != (len + 1)) {
+                return 1;
+            }
+        }
+    }
+
+    fclose(file);
+    free(reg1);
+    free(reg2);
+    return 0;
+};
+
 
 void sort_wrapper(char *path, int amount, int len, int mode) {
+    if (mode == lib_mode) {
+        if (lib_sort(path, amount, len) == 1) {
+            printf("%s", "Oops! Something went with sorting 🦖");
+        }
+    }
 
 }
 
@@ -67,12 +112,29 @@ int main(int argc, char **argv) {
             printf("%s", "There's no enough argument! : ¯\\_(ツ)_/¯");
             return 1;
         }
-        
-
+        int amount = (int) strtol(argv[3], NULL, 10);
+        int len = (int) strtol(argv[4], NULL, 10);
+        if (strcmp(argv[5], "sys") == 0) {
+            sort_wrapper(argv[2], amount, len, sys_mode);
+        } else if (strcmp(argv[5], "lib") == 0) {
+            sort_wrapper(argv[2], amount, len, lib_mode);
+        } else {
+            printf("%s", "There's no such a mode 🙄");
+        }
     } else if (strcmp(argv[1], "copy") == 0) {
-        if (argc < 6) {
+        if (argc < 7) {
             printf("%s", "There's no enough argument! : ¯\\_(ツ)_/¯");
             return 1;
+        }
+        int amount = (int) strtol(argv[4], NULL, 10);
+        int len = (int) strtol(argv[5], NULL, 10);
+        if (strcmp(argv[6], "sys") == 0) {
+            copy_wrapper(argv[2], argv[3], amount, len, sys_mode);
+        } else if (strcmp(argv[6], "lib") == 0) {
+            copy_wrapper(argv[2], argv[3], amount, len, lib_mode);
+
+        } else {
+            printf("%s", "There's no such a mode 🙄");
         }
 
     } else {
