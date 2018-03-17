@@ -42,36 +42,32 @@ void generate_wrapper(char *path, int amount, int len) {
 }
 
 int lib_sort(char *path, int amount, int len) {
-    printf("%d", amount);
-    printf("%d", len);
     FILE *file = fopen(path, "r+");
     char *reg1 = malloc((len + 1) * sizeof(char));
     char *reg2 = malloc((len + 1) * sizeof(char));
+
     long int offset = (long int) ((len + 1) * sizeof(char));
     int j;
 
     for (int i = 0; i < amount; i++) {
         fseek(file, i * offset, 0);
-        if (fread(reg1, sizeof(char), (size_t) (len + 1), file) != (len + 1)) {
+        if (fread(reg1, sizeof(char), (size_t)(len + 1), file) != (len + 1)) {
             return 1;
         }
 
-        for (j = i - 1; j >= 0; j--) {
+        for (j = 0; j < i; j++) {
             fseek(file, j * offset, 0);
-            if (fread(reg2, sizeof(char), (size_t) (len + 1), file) != (len + 1)) {
+            if (fread(reg2, sizeof(char), (size_t)(len + 1), file) != (len + 1)) {
                 return 1;
             }
-            if (reg1[0] >= reg2[0]) {
-                break;
-            }
-            if (fwrite(reg2, sizeof(char), (size_t) (len + 1), file) != (len + 1)) {
-                return 1;
-            }
-        }
-        fseek(file, (j + 1) * offset, 0);
-        if (j != -1 ) {
-            if (fwrite(reg1, sizeof(char), (size_t)(len + 1), file) != (len + 1)) {
-                return 1;
+            if (reg2[0] > reg1[0]) {
+                fseek(file, j * offset, 0);
+                fwrite(reg1, sizeof(char), (size_t)(len + 1), file);
+                fseek(file, i * offset, 0);
+                fwrite(reg2, sizeof(char), (size_t)(len + 1), file);
+                char *tmp = reg1;
+                reg1 = reg2;
+                reg2 = tmp;
             }
         }
     }
