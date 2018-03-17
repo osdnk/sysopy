@@ -30,8 +30,7 @@ zad3_shared:
 	make shared
 	$(CC) -o test main.c -L. library.so -I . -O$(Olevel)
 	# works :)
-	make tests
-
+Smolnik
 
 tests:
 	# static
