@@ -66,9 +66,13 @@ int lib_sort(char *path, int amount, int len) {
             }
             if (reg2[0] > reg1[0]) {
                 fseek(file, j * offset, 0);
-                fwrite(reg1, sizeof(char), (size_t)(len + 1), file);
+                if (fwrite(reg1, sizeof(char), (size_t)(len + 1), file) != (len + 1)) {
+                    return 1;
+                }
                 fseek(file, i * offset, 0);
-                fwrite(reg2, sizeof(char), (size_t)(len + 1), file);
+                if (fwrite(reg2, sizeof(char), (size_t)(len + 1), file) != (len + 1)) {
+                    return 1;
+                }
                 char *tmp = reg1;
                 reg1 = reg2;
                 reg2 = tmp;
@@ -88,24 +92,27 @@ int sys_sort(char *path, int amount, int len) {
     char *reg2 = malloc((len + 1) * sizeof(char));
     long int offset = (long int) ((len + 1) * sizeof(char));
 
-    for(int i = 0; i < amount; i++){
+    for (int i = 0; i < amount; i++) {
         lseek(file, i * offset, SEEK_SET);
 
-        if(read(file, reg1, (size_t) (len + 1) * sizeof(char)) != (len + 1)) {
+        if (read(file, reg1, (size_t)(len + 1) * sizeof(char)) != (len + 1)) {
             return 1;
         }
 
-        for(int j = 0; j < i; j++){
+        for (int j = 0; j < i; j++) {
             lseek(file, j * offset, SEEK_SET);
             if (read(file, reg2, sizeof(char) * (len + 1)) != (len + 1)) {
                 return 1;
             }
-            printf("%s %s\n", reg1, reg2);
             if (reg2[0] > reg1[0]) {
                 lseek(file, j * offset, 0);
-                write(file, reg1, sizeof(char) * (len + 1));
+                if (write(file, reg1, sizeof(char) * (len + 1)) != (len + 1)) {
+                    return 1;
+                }
                 lseek(file, i * offset, 0);
-                write(file, reg2, sizeof(char) * (len + 1));
+                if (write(file, reg2, sizeof(char) * (len + 1)) != (len + 1)) {
+                    return 1;
+                }
                 char *tmp = reg1;
                 reg1 = reg2;
                 reg2 = tmp;
