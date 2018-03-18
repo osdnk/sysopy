@@ -14,33 +14,17 @@
 #include <string.h>
 #include <limits.h>
 
-static const char default_format[] = "%b %d %H:%M";
+const char format[] = "%Y-%m-%d %H:%M:%S";
 int const buff_size = PATH_MAX;
 
-int date_compare(time_t *date_1, time_t *date_2)
+double date_compare(time_t date_1, time_t date_2)
 {
-    struct tm *tm1 = malloc(sizeof(struct tm));
-    struct tm *tm2 = malloc(sizeof(struct tm));
-    tm1 = localtime_r(date_1, tm1);
-    tm2 = localtime_r(date_2, tm2);
-
-    int res =
-            tm1->tm_mon - tm2->tm_mon == 0
-            ? (tm1->tm_mday - tm2->tm_mday == 0
-               ? (tm1->tm_hour - tm2->tm_hour == 0
-                  ? (tm1->tm_min - tm2->tm_min == 0
-                     ? 0
-                     : tm1->tm_min - tm2->tm_min)
-                  : tm1->tm_hour - tm2->tm_hour)
-               : tm1->tm_mday - tm2->tm_mday)
-            : tm1->tm_mon - tm2->tm_mon;
-    free(tm1);
-    free(tm2);
-    return res;
+    return difftime(date_1, date_2);
 }
 
-void print_info(char *path, struct dirent *rdir, struct stat *file_stat, char *buffer, const char *format)
+void print_info(char *path, struct dirent *rdir, struct stat *file_stat, char *buffer)
 {
+    printf(" %s\t", realpath(path, buffer));
     printf((S_ISDIR(file_stat->st_mode)) ? "d" : "-");
     printf((file_stat->st_mode & S_IRUSR) ? "r" : "-");
     printf((file_stat->st_mode & S_IWUSR) ? "w" : "-");
@@ -51,23 +35,13 @@ void print_info(char *path, struct dirent *rdir, struct stat *file_stat, char *b
     printf((file_stat->st_mode & S_IROTH) ? "r" : "-");
     printf((file_stat->st_mode & S_IWOTH) ? "w" : "-");
     printf((file_stat->st_mode & S_IXOTH) ? "x" : "-");
-
-    printf(" %ld\t", file_stat->st_nlink);
-
-    printf(" %s\t", getpwuid(file_stat->st_uid)->pw_name);
-    printf(" %s\t", getpwuid(file_stat->st_gid)->pw_name);
-
-    printf(" %ld\t", file_stat->st_size);
-
+    printf(" %lld\t", file_stat->st_size);
     strftime(buffer, buff_size, format, localtime(&file_stat->st_mtime));
     printf(" %s\t", buffer);
-
-    printf(" %s\t", realpath(path, buffer));
-
     printf("\n");
 }
 
-void tree_rusher(char *path, char *op, time_t *date, const char *format, char *buffer)
+void tree_rusher(char *path, char *op, time_t date, char *buffer)
 {
     if (path == NULL)
         return;
@@ -87,6 +61,8 @@ void tree_rusher(char *path, char *op, time_t *date, const char *format, char *b
         strcat(new_path, "/");
         strcat(new_path, rdir->d_name);
 
+       // printf("%s", new_path);
+
         stat(new_path, &file_stat);
 
         if (S_ISLNK(file_stat.st_mode))
@@ -104,22 +80,22 @@ void tree_rusher(char *path, char *op, time_t *date, const char *format, char *b
             if (S_ISREG(file_stat.st_mode))
             {
                 if (strcmp(op, "=") == 0)
-                    date_compare(date, &file_stat.st_mtime) == 0
-                    ? print_info(new_path, rdir, &file_stat, buffer, format)
+                    date_compare(date, file_stat.st_mtime) == 0
+                    ? print_info(new_path, rdir, &file_stat, buffer)
                     : "";
                 else if (strcmp(op, "<") == 0)
-                    date_compare(date, &file_stat.st_mtime) > 0
-                    ? print_info(new_path, rdir, &file_stat, buffer, format)
+                    date_compare(date, file_stat.st_mtime) > 0
+                    ? print_info(new_path, rdir, &file_stat, buffer)
                     : "";
                 else if (strcmp(op, ">") == 0)
-                    date_compare(date, &file_stat.st_mtime) < 0
-                    ? print_info(new_path, rdir, &file_stat, buffer, format)
+                    date_compare(date, file_stat.st_mtime) < 0
+                    ? print_info(new_path, rdir, &file_stat, buffer)
                     : "";
             }
 
             if (S_ISDIR(file_stat.st_mode))
             {
-                tree_rusher(realpath(rdir->d_name, new_path), op, date, format, buffer);
+               // tree_rusher(realpath(rdir->d_name, new_path), op, date, format, buffer);
             }
             rdir = readdir(dir);
         }
@@ -129,7 +105,6 @@ void tree_rusher(char *path, char *op, time_t *date, const char *format, char *b
 
 int main(int argc, char **argv)
 {
-    printf("%s", "-1");
 
     if (argc < 4)
     {
@@ -138,42 +113,30 @@ int main(int argc, char **argv)
     }
 
 
-    printf("%s", "0");
 
-
-
-
-    char *start_path = argv[1];
+    char *path = argv[1];
     char *op = argv[2];
     char *usr_date = argv[3];
 
-    char buff[buff_size];
-
-    const char *format = default_format;
     struct tm *tm = malloc(sizeof(struct tm));
-
-    printf("%s", "1");
-
-    strptime(strcat(usr_date, ":00"), "%b %d %H:%M:%S", tm);
-    time_t date = mktime(tm);
-    tm = localtime(&date);
-    printf("%s", "2");
-
-
     char buffer[buff_size];
 
-    printf("%s", realpath(start_path, buff));
+    strptime(usr_date, format, tm);
+    strftime(buffer, buff_size, format, tm);
+    time_t date = mktime(tm);
 
-    DIR *dir = opendir(start_path);
+
+
+    DIR *dir = opendir(realpath(path , NULL));
     if (dir == NULL)
     {
         printf("couldnt open the directory\n");
-        exit(EXIT_FAILURE);
+        return 1;
     }
 
-    tree_rusher(realpath(start_path, buff), op, &date, format, buffer);
 
-    free(tm);
+    tree_rusher(realpath(path , NULL), op, date, buffer);
+
     closedir(dir);
     return 0;
 }
