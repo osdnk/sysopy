@@ -141,8 +141,57 @@ void sort_wrapper(char *path, int amount, int len, int mode) {
 
 }
 
-void copy_wrapper(char *source, char *destination, int amount, int buffer, int mode) {
+int sys_copy(char *path, char *dest, int amount, int len){
+    int source = open(path, O_RDONLY);
+    int target = open(dest, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
+    char *tmp = malloc(len * sizeof(char));
 
+    for (int i = 0; i < amount; i++){
+        if(read(source, tmp, (size_t) (len + 1) * sizeof(char)) != (len + 1)) {
+            return 1;
+        }
+
+        if(write(target, tmp, (size_t) (len + 1) * sizeof(char)) != (len + 1)) {
+            return 1;
+        }
+    }
+    close(source);
+    close(target);
+    free(tmp);
+    return 0;
+};
+
+int lib_copy(char *path, char *dest, int amount, int len) {
+    FILE *source = fopen(path, "r");
+    FILE *target = fopen(dest, "w+");
+    char *tmp = malloc(len * sizeof(char));
+
+    for (int i = 0; i < amount; i++){
+        if(fread(tmp, sizeof(char), (size_t) (len + 1), source) != (len + 1)) {
+            return 1;
+        }
+
+        if(fwrite(tmp, sizeof(char), (size_t) (len + 1), target) != (len + 1)) {
+            return 1;
+        }
+    }
+    fclose(source);
+    fclose(target);
+    free(tmp);
+    return 0;
+};
+
+void copy_wrapper(char *source, char *destination, int amount, int buffer, int mode) {
+    if (mode == lib_mode) {
+        if (lib_copy(source, destination, amount, buffer) == 1) {
+            printf("%s", "Oops! Something went with copying 🦖");
+        }
+    } else {
+        if (sys_copy(source, destination, amount, buffer) == 1) {
+            printf("%s", "Oops! Something went with copying 🦖");
+        }
+
+    }
 }
 
 int main(int argc, char **argv) {
