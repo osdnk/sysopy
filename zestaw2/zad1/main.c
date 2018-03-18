@@ -5,6 +5,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #define sys_mode 1
 #define lib_mode 0
 
@@ -47,7 +52,6 @@ int lib_sort(char *path, int amount, int len) {
     char *reg2 = malloc((len + 1) * sizeof(char));
 
     long int offset = (long int) ((len + 1) * sizeof(char));
-    int j;
 
     for (int i = 0; i < amount; i++) {
         fseek(file, i * offset, 0);
@@ -55,7 +59,7 @@ int lib_sort(char *path, int amount, int len) {
             return 1;
         }
 
-        for (j = 0; j < i; j++) {
+        for (int j = 0; j < i; j++) {
             fseek(file, j * offset, 0);
             if (fread(reg2, sizeof(char), (size_t)(len + 1), file) != (len + 1)) {
                 return 1;
@@ -78,12 +82,54 @@ int lib_sort(char *path, int amount, int len) {
     return 0;
 };
 
+int sys_sort(char *path, int amount, int len) {
+    int file = open(path, O_RDWR);
+    char *reg1 = malloc((len + 1) * sizeof(char));
+    char *reg2 = malloc((len + 1) * sizeof(char));
+    long int offset = (long int) ((len + 1) * sizeof(char));
+
+    for(int i = 0; i < amount; i++){
+        lseek(file, i * offset, SEEK_SET);
+
+        if(read(file, reg1, (size_t) (len + 1) * sizeof(char)) != (len + 1)) {
+            return 1;
+        }
+
+        for(int j = 0; j < i; j++){
+            lseek(file, j * offset, SEEK_SET);
+            if (read(file, reg2, sizeof(char) * (len + 1)) != (len + 1)) {
+                return 1;
+            }
+            printf("%s %s\n", reg1, reg2);
+            if (reg2[0] > reg1[0]) {
+                lseek(file, j * offset, 0);
+                write(file, reg1, sizeof(char) * (len + 1));
+                lseek(file, i * offset, 0);
+                write(file, reg2, sizeof(char) * (len + 1));
+                char *tmp = reg1;
+                reg1 = reg2;
+                reg2 = tmp;
+            }
+        }
+    }
+
+    close(file);
+    free(reg1);
+    free(reg2);
+    return 0;
+}
+
 
 void sort_wrapper(char *path, int amount, int len, int mode) {
     if (mode == lib_mode) {
         if (lib_sort(path, amount, len) == 1) {
             printf("%s", "Oops! Something went with sorting 🦖");
         }
+    } else {
+        if (sys_sort(path, amount, len) == 1) {
+            printf("%s", "Oops! Something went with sorting 🦖");
+        }
+
     }
 
 }
