@@ -19,6 +19,7 @@
 
 const char format[] = "%Y-%m-%d %H:%M:%S";
 int const buff_size = PATH_MAX;
+char buffer[buff_size];
 
 double date_compare(time_t date_1, time_t date_2) {
     return difftime(date_1, date_2);
@@ -43,7 +44,7 @@ void print_info(char *path, struct dirent *rdir, struct stat *file_stat, char *b
 }
 
 
-void file_insider(char *path, char *op, time_t date, char *buffer) {
+void file_insider(char *path, char *op, time_t date) {
     if (path == NULL)
         return;
     DIR *dir = opendir(path);
@@ -62,7 +63,6 @@ void file_insider(char *path, char *op, time_t date, char *buffer) {
         strcat(new_path, "/");
         strcat(new_path, rdir->d_name);
 
-       // printf("%s", new_path);
 
         stat(new_path, &file_stat);
 
@@ -96,7 +96,7 @@ void file_insider(char *path, char *op, time_t date, char *buffer) {
 
             if (S_ISDIR(file_stat.st_mode))
             {
-               // tree_rusher(realpath(rdir->d_name, new_path), op, date, format, buffer);
+                file_insider(realpath(rdir->d_name, new_path), op, date);
             }
             rdir = readdir(dir);
         }
@@ -120,7 +120,6 @@ int main(int argc, char **argv)
     char *usr_date = argv[3];
 
     struct tm *tm = malloc(sizeof(struct tm));
-    char buffer[buff_size];
 
     strptime(usr_date, format, tm);
     strftime(buffer, buff_size, format, tm);
@@ -136,7 +135,7 @@ int main(int argc, char **argv)
     }
 
 
-    file_insider(realpath(path , NULL), op, date, buffer);
+    file_insider(realpath(path , NULL), op, date);
 
     closedir(dir);
     return 0;
