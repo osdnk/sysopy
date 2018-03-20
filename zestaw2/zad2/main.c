@@ -20,7 +20,7 @@ const char format[] = "%Y-%m-%d %H:%M:%S";
 int const buff_size = PATH_MAX;
 char buffer[buff_size];
 time_t gdate;
-char* goperant;
+char *goperant;
 
 double date_compare(time_t date_1, time_t date_2) {
     return difftime(date_1, date_2);
