@@ -20,12 +20,13 @@ const char format[] = "%Y-%m-%d %H:%M:%S";
 int const buff_size = PATH_MAX;
 char buffer[buff_size];
 time_t gdate;
+char* goperant;
 
 double date_compare(time_t date_1, time_t date_2) {
     return difftime(date_1, date_2);
 }
 
-void print_info(char *path, struct dirent *rdir, struct stat *file_stat) {
+void print_info(const char *path, const struct stat *file_stat) {
     printf(" %s\t", realpath(path, NULL));
     printf((S_ISDIR(file_stat->st_mode)) ? "d" : "-");
     printf((file_stat->st_mode & S_IRUSR) ? "r" : "-");
@@ -45,31 +46,18 @@ void print_info(char *path, struct dirent *rdir, struct stat *file_stat) {
 
 static int nftw_display(const char *fpath, const struct stat *file_stat, int typeflag, struct FTW *ftwbuf) {
     struct tm mtime;
-    char res[32];
 
     (void) localtime_r(&file_stat->st_mtime, &mtime);
-    if(!date_compare(file_stat->st_mtime, gdate)) {
+
+    int comparison_result = date_compare(gdate, file_stat->st_mtime);
+    if (!(
+            (comparison_result == 0 && strcmp(goperant, "=") == 0)
+            || (comparison_result > 0 && strcmp(goperant, "<") == 0)
+            || (comparison_result < 0 && strcmp(goperant, ">") == 0)
+    )) {
         return 0;
     }
-
-    printf(" %s\t", realpath(fpath, NULL));
-    printf((S_ISDIR(file_stat->st_mode)) ? "d" : "-");
-    printf((file_stat->st_mode & S_IRUSR) ? "r" : "-");
-    printf((file_stat->st_mode & S_IWUSR) ? "w" : "-");
-    printf((file_stat->st_mode & S_IXUSR) ? "x" : "-");
-    printf((file_stat->st_mode & S_IRGRP) ? "r" : "-");
-    printf((file_stat->st_mode & S_IWGRP) ? "w" : "-");
-    printf((file_stat->st_mode & S_IXGRP) ? "x" : "-");
-    printf((file_stat->st_mode & S_IROTH) ? "r" : "-");
-    printf((file_stat->st_mode & S_IWOTH) ? "w" : "-");
-    printf((file_stat->st_mode & S_IXOTH) ? "x" : "-");
-    printf(" %lld\t", file_stat->st_size);
-    strftime(buffer, buff_size, format, localtime(&file_stat->st_mtime));
-    printf(" %s\t", buffer);
-    printf("\n");
-
-
-
+    print_info(fpath, file_stat);
     return 0;
 }
 
@@ -102,18 +90,13 @@ void file_insider(char *path, char *operant, time_t date) {
             rdir = readdir(dir);
             continue;
         } else {
-            if (strcmp(operant, "=") == 0)
-                date_compare(date, file_stat.st_mtime) == 0
-                ? print_info(new_path, rdir, &file_stat)
-                : "";
-            else if (strcmp(operant, "<") == 0)
-                date_compare(date, file_stat.st_mtime) > 0
-                ? print_info(new_path, rdir, &file_stat)
-                : "";
-            else if (strcmp(operant, ">") == 0)
-                date_compare(date, file_stat.st_mtime) < 0
-                ? print_info(new_path, rdir, &file_stat)
-                : "";
+            if (strcmp(operant, "=") == 0 && date_compare(date, file_stat.st_mtime) == 0) {
+                print_info(new_path, &file_stat);
+            } else if (strcmp(operant, "<") == 0 && date_compare(date, file_stat.st_mtime) > 0) {
+                print_info(new_path, &file_stat);
+            } else if (strcmp(operant, ">") == 0 && date_compare(date, file_stat.st_mtime) < 0) {
+                print_info(new_path, &file_stat);
+            }
 
 
             if (S_ISDIR(file_stat.st_mode)) {
@@ -134,7 +117,7 @@ int main(int argc, char **argv) {
 
 
     char *path = argv[1];
-    char *op = argv[2];
+    char *operant = argv[2];
     char *usr_date = argv[3];
 
     struct tm *tm = malloc(sizeof(struct tm));
@@ -142,7 +125,6 @@ int main(int argc, char **argv) {
     strptime(usr_date, format, tm);
     strftime(buffer, buff_size, format, tm);
     time_t date = mktime(tm);
-    gdate = mktime(tm);
 
 
     DIR *dir = opendir(realpath(path, NULL));
@@ -152,12 +134,15 @@ int main(int argc, char **argv) {
     }
 
 
-    file_insider(realpath(path, NULL), op, date);
+    file_insider(realpath(path, NULL), operant, date);
 
     printf("\n\n\n");
-
+    gdate = date; // global args for nftw
+    goperant = operant;
+    printf("%s", "\n\n NFTW \n\n");
     nftw(realpath(path, NULL), nftw_display, 10, FTW_PHYS);
 
     closedir(dir);
+
     return 0;
 }
