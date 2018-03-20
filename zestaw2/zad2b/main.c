@@ -11,6 +11,7 @@
 #include <zconf.h>
 #include <dirent.h>
 #include <limits.h>
+#define PATH_MAX 1024
 
 static const char default_format[] = "%d %b %H:%M";
 int search = 0;
