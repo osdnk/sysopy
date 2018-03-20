@@ -16,7 +16,6 @@
 #include <ftw.h>
 
 
-
 const char format[] = "%Y-%m-%d %H:%M:%S";
 int const buff_size = PATH_MAX;
 char buffer[buff_size];
@@ -57,8 +56,7 @@ void file_insider(char *path, char *op, time_t date) {
 
     char new_path[buff_size];
 
-    while (rdir != NULL)
-    {
+    while (rdir != NULL) {
         strcpy(new_path, path);
         strcat(new_path, "/");
         strcat(new_path, rdir->d_name);
@@ -66,20 +64,14 @@ void file_insider(char *path, char *op, time_t date) {
 
         stat(new_path, &file_stat);
 
-        if (S_ISLNK(file_stat.st_mode))
-        {
+        if (S_ISLNK(file_stat.st_mode)) {
             rdir = readdir(dir);
             continue;
-        }
-        else if (strcmp(rdir->d_name, ".") == 0 || strcmp(rdir->d_name, "..") == 0)
-        {
+        } else if (strcmp(rdir->d_name, ".") == 0 || strcmp(rdir->d_name, "..") == 0) {
             rdir = readdir(dir);
             continue;
-        }
-        else
-        {
-            if (S_ISREG(file_stat.st_mode))
-            {
+        } else {
+            if (S_ISREG(file_stat.st_mode)) {
                 if (strcmp(op, "=") == 0)
                     date_compare(date, file_stat.st_mtime) == 0
                     ? print_info(new_path, rdir, &file_stat, buffer)
@@ -94,8 +86,7 @@ void file_insider(char *path, char *op, time_t date) {
                     : "";
             }
 
-            if (S_ISDIR(file_stat.st_mode))
-            {
+            if (S_ISDIR(file_stat.st_mode)) {
                 file_insider(realpath(rdir->d_name, new_path), op, date);
             }
             rdir = readdir(dir);
@@ -104,15 +95,12 @@ void file_insider(char *path, char *op, time_t date) {
     closedir(dir);
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 
-    if (argc < 4)
-    {
+    if (argc < 4) {
         printf("need more arguments");
         exit(EXIT_FAILURE);
     }
-
 
 
     char *path = argv[1];
@@ -126,16 +114,14 @@ int main(int argc, char **argv)
     time_t date = mktime(tm);
 
 
-
-    DIR *dir = opendir(realpath(path , NULL));
-    if (dir == NULL)
-    {
+    DIR *dir = opendir(realpath(path, NULL));
+    if (dir == NULL) {
         printf("couldnt open the directory\n");
         return 1;
     }
 
 
-    file_insider(realpath(path , NULL), op, date);
+    file_insider(realpath(path, NULL), op, date);
 
     closedir(dir);
     return 0;
