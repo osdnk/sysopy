@@ -10,12 +10,20 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include <time.h>
+#include <sys/times.h>
+
 #define sys_mode 1
 #define lib_mode 0
 
+double calculate_time(clock_t start, clock_t end) {
+    return (double) (end - start) / sysconf(_SC_CLK_TCK);
+}
+
+
 int generate(char *path, int amount, int len) {
     FILE *file = fopen(path, "w+");
-    FILE *rnd = fopen("/dev/random", "r");
+    FILE *rnd = fopen("/dev/urandom", "r");
     char *tmp = malloc(len * sizeof(char) + 1);
     for (int i = 0; i < amount; ++i) {
         if (fread(tmp, sizeof(char), (size_t) len + 1, rnd) != len + 1) {
@@ -200,6 +208,16 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    struct tms **tms_time = malloc(2 * sizeof(struct tms *));
+    clock_t real_time[6];
+    for (int i = 0; i < 2; i++) {
+        tms_time[i] = (struct tms *) malloc(sizeof(struct tms *));
+    }
+
+    printf("   Real      User      System\n");
+
+    real_time[0] = times(tms_time[0]);
+
     if (strcmp(argv[1], "generate") == 0) {
         int amount = (int) strtol(argv[3], NULL, 10);
         int len = (int) strtol(argv[4], NULL, 10);
@@ -238,5 +256,11 @@ int main(int argc, char **argv) {
     } else {
         printf("%s", "Are you pretty sure everything if ok?🤔");
     }
+    real_time[1] = times(tms_time[1]);
+    printf("%lf   ", calculate_time(real_time[0], real_time[1]));
+    printf("%lf   ", calculate_time(tms_time[0]->tms_utime, tms_time[1]->tms_utime));
+
+    printf("%lf ", calculate_time(tms_time[0]->tms_stime, tms_time[1]->tms_stime));
+    printf("\n");
     return 0;
 }

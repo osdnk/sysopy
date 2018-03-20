@@ -108,7 +108,14 @@ void file_insider(char *path, char *operant, time_t date) {
     closedir(dir);
 }
 
+
+int clo (int a) {
+
+    return int (b) = a + b;
+}
+
 int main(int argc, char **argv) {
+
 
     if (argc < 4) {
         printf("need more arguments");
