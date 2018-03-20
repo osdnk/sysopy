@@ -27,7 +27,7 @@ double date_compare(time_t date_1, time_t date_2) {
 }
 
 void print_info(const char *path, const struct stat *file_stat) {
-    printf(" %s\t", realpath(path, NULL));
+    printf(" %lld\t", file_stat->st_size);
     printf((S_ISDIR(file_stat->st_mode)) ? "d" : "-");
     printf((file_stat->st_mode & S_IRUSR) ? "r" : "-");
     printf((file_stat->st_mode & S_IWUSR) ? "w" : "-");
@@ -38,9 +38,9 @@ void print_info(const char *path, const struct stat *file_stat) {
     printf((file_stat->st_mode & S_IROTH) ? "r" : "-");
     printf((file_stat->st_mode & S_IWOTH) ? "w" : "-");
     printf((file_stat->st_mode & S_IXOTH) ? "x" : "-");
-    printf(" %lld\t", file_stat->st_size);
     strftime(buffer, buff_size, format, localtime(&file_stat->st_mtime));
     printf(" %s\t", buffer);
+    printf(" %s\t", realpath(path, NULL));
     printf("\n");
 }
 
