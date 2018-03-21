@@ -1,0 +1,346 @@
+gcc -std=c11 -o res main.c -O2
+#compiled
+#generate
+for l in 4 512 4096 8192; \
+	do \
+		for a in 3000 10000 60000 120000; \
+		do \
+			echo "creating file with $a records of size $l"; \
+			./res generate test_file $a $l; \
+			rm test_file; \
+		done; \
+	done
+creating file with 3000 records of size 4
+   Real      User      System
+0.000000   0.000000   0.000000 
+creating file with 10000 records of size 4
+   Real      User      System
+0.000000   0.000000   0.000000 
+creating file with 60000 records of size 4
+   Real      User      System
+0.030000   0.000000   0.020000 
+creating file with 120000 records of size 4
+   Real      User      System
+0.060000   0.010000   0.040000 
+creating file with 3000 records of size 512
+   Real      User      System
+0.120000   0.000000   0.110000 
+creating file with 10000 records of size 512
+   Real      User      System
+0.390000   0.000000   0.380000 
+creating file with 60000 records of size 512
+   Real      User      System
+2.400000   0.030000   2.350000 
+creating file with 120000 records of size 512
+   Real      User      System
+4.660000   0.050000   4.560000 
+creating file with 3000 records of size 4096
+   Real      User      System
+0.970000   0.010000   0.950000 
+creating file with 10000 records of size 4096
+   Real      User      System
+3.120000   0.030000   3.060000 
+creating file with 60000 records of size 4096
+   Real      User      System
+18.750000   0.190000   18.260000 
+creating file with 120000 records of size 4096
+   Real      User      System
+37.450000   0.390000   36.580000 
+creating file with 3000 records of size 8192
+   Real      User      System
+1.840000   0.010000   1.800000 
+creating file with 10000 records of size 8192
+   Real      User      System
+6.020000   0.060000   5.930000 
+creating file with 60000 records of size 8192
+   Real      User      System
+36.120000   0.360000   35.420000 
+creating file with 120000 records of size 8192
+   Real      User      System
+72.200000   0.720000   70.570000 
+#copy test
+for l in 4 512 4096 8192; \
+	do \
+		for a in 3000 10000 60000 120000; \
+		do \
+			echo "creating file with $a records of size $l"; \
+			./res generate test_file $a $l; \
+			for m in sys lib; \
+			do \
+				cp test_file test_file_temp; \
+				echo "$m copy file with $a records of size $l"; \
+				./res copy test_file_temp test_copy $a $l $m; \
+				rm test_file_temp; \
+				rm test_copy; \
+			done; \
+			rm test_file; \
+		done; \
+	done
+creating file with 3000 records of size 4
+   Real      User      System
+0.010000   0.000000   0.000000 
+sys copy file with 3000 records of size 4
+   Real      User      System
+0.010000   0.000000   0.010000 
+lib copy file with 3000 records of size 4
+   Real      User      System
+0.000000   0.000000   0.000000 
+creating file with 10000 records of size 4
+   Real      User      System
+0.010000   0.000000   0.000000 
+sys copy file with 10000 records of size 4
+   Real      User      System
+0.060000   0.000000   0.050000 
+lib copy file with 10000 records of size 4
+   Real      User      System
+0.000000   0.000000   0.000000 
+creating file with 60000 records of size 4
+   Real      User      System
+0.040000   0.010000   0.020000 
+sys copy file with 60000 records of size 4
+   Real      User      System
+0.370000   0.010000   0.350000 
+lib copy file with 60000 records of size 4
+   Real      User      System
+0.000000   0.000000   0.000000 
+creating file with 120000 records of size 4
+   Real      User      System
+0.060000   0.010000   0.040000 
+sys copy file with 120000 records of size 4
+   Real      User      System
+0.760000   0.020000   0.730000 
+lib copy file with 120000 records of size 4
+   Real      User      System
+0.020000   0.010000   0.000000 
+creating file with 3000 records of size 512
+   Real      User      System
+0.120000   0.000000   0.110000 
+sys copy file with 3000 records of size 512
+   Real      User      System
+0.030000   0.000000   0.020000 
+lib copy file with 3000 records of size 512
+   Real      User      System
+0.000000   0.000000   0.000000 
+creating file with 10000 records of size 512
+   Real      User      System
+0.380000   0.000000   0.370000 
+sys copy file with 10000 records of size 512
+   Real      User      System
+0.080000   0.000000   0.070000 
+lib copy file with 10000 records of size 512
+   Real      User      System
+0.010000   0.000000   0.000000 
+creating file with 60000 records of size 512
+   Real      User      System
+2.270000   0.020000   2.230000 
+sys copy file with 60000 records of size 512
+   Real      User      System
+0.450000   0.010000   0.420000 
+lib copy file with 60000 records of size 512
+   Real      User      System
+0.030000   0.010000   0.020000 
+creating file with 120000 records of size 512
+   Real      User      System
+4.510000   0.050000   4.410000 
+sys copy file with 120000 records of size 512
+   Real      User      System
+0.880000   0.020000   0.840000 
+lib copy file with 120000 records of size 512
+   Real      User      System
+0.060000   0.010000   0.040000 
+creating file with 3000 records of size 4096
+   Real      User      System
+0.890000   0.000000   0.880000 
+sys copy file with 3000 records of size 4096
+   Real      User      System
+0.050000   0.000000   0.040000 
+lib copy file with 3000 records of size 4096
+   Real      User      System
+0.010000   0.000000   0.000000 
+creating file with 10000 records of size 4096
+   Real      User      System
+3.000000   0.030000   2.940000 
+sys copy file with 10000 records of size 4096
+   Real      User      System
+0.160000   0.000000   0.140000 
+lib copy file with 10000 records of size 4096
+   Real      User      System
+0.040000   0.000000   0.020000 
+creating file with 60000 records of size 4096
+   Real      User      System
+18.480000   0.190000   18.030000 
+sys copy file with 60000 records of size 4096
+   Real      User      System
+1.100000   0.010000   1.000000 
+lib copy file with 60000 records of size 4096
+   Real      User      System
+0.230000   0.020000   0.140000 
+creating file with 120000 records of size 4096
+   Real      User      System
+36.250000   0.370000   35.410000 
+sys copy file with 120000 records of size 4096
+   Real      User      System
+1.610000   0.020000   1.460000 
+lib copy file with 120000 records of size 4096
+   Real      User      System
+0.550000   0.040000   0.320000 
+creating file with 3000 records of size 8192
+   Real      User      System
+1.790000   0.010000   1.760000 
+sys copy file with 3000 records of size 8192
+   Real      User      System
+0.060000   0.000000   0.040000 
+lib copy file with 3000 records of size 8192
+   Real      User      System
+0.020000   0.000000   0.010000 
+creating file with 10000 records of size 8192
+   Real      User      System
+5.990000   0.060000   5.880000 
+sys copy file with 10000 records of size 8192
+   Real      User      System
+0.190000   0.000000   0.150000 
+lib copy file with 10000 records of size 8192
+   Real      User      System
+0.070000   0.000000   0.040000 
+creating file with 60000 records of size 8192
+   Real      User      System
+35.870000   0.350000   35.070000 
+sys copy file with 60000 records of size 8192
+   Real      User      System
+1.070000   0.010000   0.940000 
+lib copy file with 60000 records of size 8192
+   Real      User      System
+0.670000   0.030000   0.340000 
+creating file with 120000 records of size 8192
+   Real      User      System
+72.220000   0.720000   70.690000 
+sys copy file with 120000 records of size 8192
+   Real      User      System
+2.180000   0.020000   1.770000 
+lib copy file with 120000 records of size 8192
+   Real      User      System
+1.190000   0.070000   0.670000 
+#sort test
+for l in 4 512 4096 8192; \
+	do \
+		for a in 1000 3000 10000; \
+		do \
+			echo "creating file with $a records of size $l"; \
+			./res generate test_file $a $l; \
+			for m in sys lib; \
+			do \
+				cp test_file test_file_temp; \
+				echo "$m sorting file with $a records of size $l"; \
+				./res sort test_file_temp $a $l $m; \
+				rm test_file_temp; \
+			done; \
+			rm test_file; \
+		done; \
+	done
+creating file with 1000 records of size 4
+   Real      User      System
+0.000000   0.000000   0.000000 
+sys sorting file with 1000 records of size 4
+   Real      User      System
+0.500000   0.090000   0.400000 
+lib sorting file with 1000 records of size 4
+   Real      User      System
+0.700000   0.170000   0.520000 
+creating file with 3000 records of size 4
+   Real      User      System
+0.000000   0.000000   0.000000 
+sys sorting file with 3000 records of size 4
+   Real      User      System
+4.240000   0.800000   3.400000 
+lib sorting file with 3000 records of size 4
+   Real      User      System
+7.530000   1.600000   5.780000 
+creating file with 10000 records of size 4
+   Real      User      System
+0.010000   0.000000   0.000000 
+sys sorting file with 10000 records of size 4
+   Real      User      System
+52.260000   9.960000   41.290000 
+lib sorting file with 10000 records of size 4
+   Real      User      System
+139.290000   17.650000   121.510000 
+creating file with 1000 records of size 512
+   Real      User      System
+0.050000   0.000000   0.040000 
+sys sorting file with 1000 records of size 512
+   Real      User      System
+0.530000   0.090000   0.430000 
+lib sorting file with 1000 records of size 512
+   Real      User      System
+2.240000   0.190000   2.040000 
+creating file with 3000 records of size 512
+   Real      User      System
+0.120000   0.000000   0.110000 
+sys sorting file with 3000 records of size 512
+   Real      User      System
+4.300000   0.790000   3.500000 
+lib sorting file with 3000 records of size 512
+   Real      User      System
+20.020000   1.670000   18.300000 
+creating file with 10000 records of size 512
+   Real      User      System
+0.370000   0.000000   0.360000 
+sys sorting file with 10000 records of size 512
+   Real      User      System
+46.750000   8.750000   37.950000 
+lib sorting file with 10000 records of size 512
+   Real      User      System
+218.000000   18.050000   199.710000 
+creating file with 1000 records of size 4096
+   Real      User      System
+0.300000   0.000000   0.290000 
+sys sorting file with 1000 records of size 4096
+   Real      User      System
+0.700000   0.090000   0.600000 
+lib sorting file with 1000 records of size 4096
+   Real      User      System
+creating file with 3000 records of size 4096
+   Real      User      System
+0.940000   0.010000   0.920000 
+sys sorting file with 3000 records of size 4096
+   Real      User      System
+6.550000   0.830000   5.700000 
+lib sorting file with 3000 records of size 4096
+   Real      User      System
+21.080000   2.050000   19.000000 
+creating file with 10000 records of size 4096
+   Real      User      System
+2.970000   0.030000   2.920000 
+sys sorting file with 10000 records of size 4096
+   Real      User      System
+71.050000   9.030000   61.950000 
+lib sorting file with 10000 records of size 4096
+   Real      User      System
+232.440000   23.090000   208.930000 
+creating file with 1000 records of size 8192
+   Real      User      System
+0.600000   0.000000   0.580000 
+sys sorting file with 1000 records of size 8192
+   Real      User      System
+0.920000   0.090000   0.820000 
+lib sorting file with 1000 records of size 8192
+   Real      User      System
+2.660000   0.290000   2.360000 
+creating file with 3000 records of size 8192
+   Real      User      System
+1.790000   0.010000   1.750000 
+sys sorting file with 3000 records of size 8192
+   Real      User      System
+8.450000   0.860000   7.490000 
+lib sorting file with 3000 records of size 8192
+   Real      User      System
+25.280000   2.870000   22.080000 
+creating file with 10000 records of size 8192
+   Real      User      System
+6.300000   0.060000   6.180000 
+sys sorting file with 10000 records of size 8192
+   Real      User      System
+105.650000   10.350000   94.620000 
+lib sorting file with 10000 records of size 8192
+   Real      User      System
+260.440000   28.730000   231.250000 
