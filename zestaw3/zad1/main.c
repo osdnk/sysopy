@@ -71,15 +71,17 @@ void file_insider(char *path, char *operant, time_t date) {
             rdir = readdir(dir);
             continue;
         } else {
-            if (strcmp(operant, "=") == 0 && date_compare(date, file_stat.st_mtime) == 0) {
-                print_info(new_path, &file_stat);
-            } else if (strcmp(operant, "<") == 0 && date_compare(date, file_stat.st_mtime) > 0) {
-                print_info(new_path, &file_stat);
-            } else if (strcmp(operant, ">") == 0 && date_compare(date, file_stat.st_mtime) < 0) {
-                print_info(new_path, &file_stat);
-            } else {
-                printf("%s\n", "Dunno this operator :o");
-                return;
+            if (S_ISREG(file_stat.st_mode)) {
+                if (strcmp(operant, "=") == 0 && date_compare(date, file_stat.st_mtime) == 0) {
+                    print_info(new_path, &file_stat);
+                } else if (strcmp(operant, "<") == 0 && date_compare(date, file_stat.st_mtime) > 0) {
+                    print_info(new_path, &file_stat);
+                } else if (strcmp(operant, ">") == 0 && date_compare(date, file_stat.st_mtime) < 0) {
+                    print_info(new_path, &file_stat);
+                } else {
+                    printf("%s\n", "Dunno this operator :o");
+                    return;
+                }
             }
 
 
