@@ -43,24 +43,6 @@ void print_info(const char *path, const struct stat *file_stat) {
     printf("\n");
 }
 
-static int nftw_display(const char *fpath, const struct stat *file_stat, int typeflag, struct FTW *ftwbuf) {
-    struct tm mtime;
-
-    (void) localtime_r(&file_stat->st_mtime, &mtime);
-
-    int comparison_result = date_compare(gdate, file_stat->st_mtime);
-    if (!(
-            (comparison_result == 0 && strcmp(goperant, "=") == 0)
-            || (comparison_result > 0 && strcmp(goperant, "<") == 0)
-            || (comparison_result < 0 && strcmp(goperant, ">") == 0)
-    )) {
-        return 0;
-    }
-    print_info(fpath, file_stat);
-    return 0;
-}
-
-
 void file_insider(char *path, char *operant, time_t date) {
     if (path == NULL)
         return;
@@ -102,7 +84,11 @@ void file_insider(char *path, char *operant, time_t date) {
 
 
             if (S_ISDIR(file_stat.st_mode)) {
-                file_insider(new_path, operant, date);
+                pid_t fproc;
+                if ((fproc = fork()) == 0) {
+                    file_insider(new_path, operant, date);
+                    exit(0);
+                }
             }
             rdir = readdir(dir);
         }
@@ -143,8 +129,6 @@ int main(int argc, char **argv) {
     printf("\n\n\n");
     gdate = date; // global args for nftw
     goperant = operant;
-    printf("%s", "\n\n NFTW \n\n");
-    nftw(realpath(path, NULL), nftw_display, 10, FTW_PHYS);
 
     closedir(dir);
 
