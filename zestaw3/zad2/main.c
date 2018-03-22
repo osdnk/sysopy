@@ -29,7 +29,7 @@ int main(int argc, char const *argv[]) {
             }
         };
         pid_t pid = fork();
-        if(!pid) {
+        if(pid == 0) {
             execvp(args[0], args);
         }
         int status;
