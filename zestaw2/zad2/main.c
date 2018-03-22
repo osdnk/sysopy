@@ -108,7 +108,7 @@ void file_follow(char *path, char *operant, time_t date) {
 
 
             if (S_ISDIR(file_stat.st_mode)) {
-                file_insider(new_path, operant, date);
+                file_follow(new_path, operant, date);
             }
             rdir = readdir(dir);
         }
@@ -143,7 +143,7 @@ int main(int argc, char **argv) {
     }
 
 
-    file_insider(realpath(path, NULL), operant, date);
+    file_follow(realpath(path, NULL), operant, date);
 
     printf("\n\n\n");
     gdate = date; // global args for nftw
