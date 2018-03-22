@@ -16,8 +16,7 @@
 
 
 const char format[] = "%Y-%m-%d %H:%M:%S";
-int const buff_size = PATH_MAX;
-char buffer[buff_size];
+char buffer[PATH_MAX];
 time_t gdate;
 char *goperant;
 
@@ -37,7 +36,7 @@ void print_info(const char *path, const struct stat *file_stat) {
     printf((file_stat->st_mode & S_IROTH) ? "r" : "-");
     printf((file_stat->st_mode & S_IWOTH) ? "w" : "-");
     printf((file_stat->st_mode & S_IXOTH) ? "x" : "-");
-    strftime(buffer, buff_size, format, localtime(&file_stat->st_mtime));
+    strftime(buffer, PATH_MAX, format, localtime(&file_stat->st_mtime));
     printf(" %s\t", buffer);
     printf(" %s\t", path);
     printf("\n");
@@ -79,7 +78,7 @@ void file_follow(char *path, char *operant, time_t date) {
     struct dirent *rdir = readdir(dir);
     struct stat file_stat;
 
-    char new_path[buff_size];
+    char new_path[PATH_MAX];
 
     while (rdir != NULL) {
         strcpy(new_path, path);
