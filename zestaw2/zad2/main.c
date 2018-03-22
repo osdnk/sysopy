@@ -121,8 +121,8 @@ void file_insider(char *path, char *operant, time_t date) {
 int main(int argc, char **argv) {
 
     if (argc < 4) {
-        printf("need more arguments");
-        exit(EXIT_FAILURE);
+        printf("Bad args!");
+        return 1;
     }
 
 
