@@ -2,7 +2,6 @@
 // Created by Michał Osadnik on 18/03/2018.
 //
 
-
 #include <time.h>
 #include <dirent.h>
 #include <stdlib.h>
