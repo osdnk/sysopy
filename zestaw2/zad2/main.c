@@ -26,7 +26,6 @@ double date_compare(time_t date_1, time_t date_2) {
 
 void print_info(const char *path, const struct stat *file_stat) {
     printf(" %lld\t", file_stat->st_size);
-    printf((S_ISDIR(file_stat->st_mode)) ? "d" : "-");
     printf((file_stat->st_mode & S_IRUSR) ? "r" : "-");
     printf((file_stat->st_mode & S_IWUSR) ? "w" : "-");
     printf((file_stat->st_mode & S_IXUSR) ? "x" : "-");
@@ -64,7 +63,7 @@ static int nftw_display(const char *fpath, const struct stat *file_stat, int typ
 }
 
 
-void file_follow(char *path, char *operant, time_t date) {
+void dir_follow(char *path, char *operant, time_t date) {
     if (path == NULL)
         return;
     DIR *dir = opendir(path);
@@ -104,7 +103,7 @@ void file_follow(char *path, char *operant, time_t date) {
 
 
             if (S_ISDIR(file_stat.st_mode)) {
-                file_follow(new_path, operant, date);
+                dir_follow(new_path, operant, date);
             }
             rdir = readdir(dir);
         }
@@ -141,7 +140,7 @@ int main(int argc, char **argv) {
     printf("%s", "\n\n Naive \n\n");
 
 
-    file_follow(realpath(path, NULL), operant, date);
+    dir_follow(realpath(path, NULL), operant, date);
 
     printf("\n\n\n");
     gdate = date; // global args for nftw
