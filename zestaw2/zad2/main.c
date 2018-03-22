@@ -84,7 +84,7 @@ void file_insider(char *path, char *operant, time_t date) {
         strcat(new_path, rdir->d_name);
 
 
-        stat(new_path, &file_stat);
+        lstat(new_path, &file_stat);
 
         if (strcmp(rdir->d_name, ".") == 0 || strcmp(rdir->d_name, "..") == 0) {
             rdir = readdir(dir);

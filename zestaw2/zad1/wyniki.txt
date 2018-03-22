@@ -1,0 +1,8 @@
+OS_X sys is generally faster when it comes to great number of r/w. Otherwise lib is better
+ubuntu lib jest hardly always faster. When it comes to the most extreme cases sys is getting a little bit faster e.g.
+sys sorting file with 10000 records of size 8192
+   Real      User      System
+88.360000   3.130000   84.640000
+lib sorting file with 10000 records of size 8192
+   Real      User      System
+103.320000   17.060000   86.060000

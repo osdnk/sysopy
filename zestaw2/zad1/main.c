@@ -22,8 +22,8 @@ double calculate_time(clock_t start, clock_t end) {
 
 
 int generate(char *path, int amount, int len) {
-    FILE *file = fopen(path, "w+");
-    FILE *rnd = fopen("/dev/urandom", "r");
+    FILE *file = fopen(path, "w+"); // write + read
+    FILE *rnd = fopen("/dev/urandom", "r"); // open rand generator
     char *tmp = malloc(len * sizeof(char) + 1);
     for (int i = 0; i < amount; ++i) {
         if (fread(tmp, sizeof(char), (size_t) len + 1, rnd) != len + 1) {
@@ -40,8 +40,8 @@ int generate(char *path, int amount, int len) {
             return 1;
         }
     }
-    fclose(file);
-    fclose(rnd);
+    fclose(file); // close file
+    fclose(rnd); // ... and random buffer
     free(tmp);
     return 0;
 };
@@ -62,8 +62,8 @@ int lib_sort(char *path, int amount, int len) {
     long int offset = (long int) ((len + 1) * sizeof(char));
 
     for (int i = 0; i < amount; i++) {
-        fseek(file, i * offset, 0);
-        if (fread(reg1, sizeof(char), (size_t)(len + 1), file) != (len + 1)) {
+        fseek(file, i * offset, 0); // 0 offset from beg
+        if (fread(reg1, sizeof(char), (size_t)(len + 1), file) != (len + 1)) { // fread -- where?,what?,how many?,from?
             return 1;
         }
 
@@ -78,7 +78,7 @@ int lib_sort(char *path, int amount, int len) {
                     return 1;
                 }
                 fseek(file, i * offset, 0);
-                if (fwrite(reg2, sizeof(char), (size_t)(len + 1), file) != (len + 1)) {
+                if (fwrite(reg2, sizeof(char), (size_t)(len + 1), file) != (len + 1)) { // fwrite. Same params
                     return 1;
                 }
                 char *tmp = reg1;
@@ -101,9 +101,9 @@ int sys_sort(char *path, int amount, int len) {
     long int offset = (long int) ((len + 1) * sizeof(char));
 
     for (int i = 0; i < amount; i++) {
-        lseek(file, i * offset, SEEK_SET);
+        lseek(file, i * offset, SEEK_SET); // SEEK_SET - from beg
 
-        if (read(file, reg1, (size_t)(len + 1) * sizeof(char)) != (len + 1)) {
+        if (read(file, reg1, (size_t)(len + 1) * sizeof(char)) != (len + 1)) { //from, where, how many?
             return 1;
         }
 
@@ -151,7 +151,7 @@ void sort_wrapper(char *path, int amount, int len, int mode) {
 
 int sys_copy(char *path, char *dest, int amount, int len){
     int source = open(path, O_RDONLY);
-    int target = open(dest, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
+    int target = open(dest, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR); // create ifne, wr only, trunc to 0
     char *tmp = malloc(len * sizeof(char));
 
     for (int i = 0; i < amount; i++){
