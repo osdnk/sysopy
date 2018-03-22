@@ -48,6 +48,10 @@ static int nftw_display(const char *fpath, const struct stat *file_stat, int typ
 
     (void) localtime_r(&file_stat->st_mtime, &mtime);
 
+    if (typeflag != FTW_F) {
+        return 0;
+    }
+
     int comparison_result = date_compare(gdate, file_stat->st_mtime);
     if (!(
             (comparison_result == 0 && strcmp(goperant, "=") == 0)
@@ -89,15 +93,17 @@ void file_insider(char *path, char *operant, time_t date) {
             rdir = readdir(dir);
             continue;
         } else {
-            if (strcmp(operant, "=") == 0 && date_compare(date, file_stat.st_mtime) == 0) {
-                print_info(new_path, &file_stat);
-            } else if (strcmp(operant, "<") == 0 && date_compare(date, file_stat.st_mtime) > 0) {
-                print_info(new_path, &file_stat);
-            } else if (strcmp(operant, ">") == 0 && date_compare(date, file_stat.st_mtime) < 0) {
-                print_info(new_path, &file_stat);
-            } else {
-                printf("%s\n", "Dunno this operator :o");
-                return;
+            if (S_ISREG(file_stat.st_mode)) {
+                if (strcmp(operant, "=") == 0 && date_compare(date, file_stat.st_mtime) == 0) {
+                    print_info(new_path, &file_stat);
+                } else if (strcmp(operant, "<") == 0 && date_compare(date, file_stat.st_mtime) > 0) {
+                    print_info(new_path, &file_stat);
+                } else if (strcmp(operant, ">") == 0 && date_compare(date, file_stat.st_mtime) < 0) {
+                    print_info(new_path, &file_stat);
+                } else {
+                    printf("%s\n", "Dunno this operator :o");
+                    return;
+                }
             }
 
 
