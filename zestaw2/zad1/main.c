@@ -151,7 +151,7 @@ void sort_wrapper(char *path, int amount, int len, int mode) {
 
 int sys_copy(char *path, char *dest, int amount, int len){
     int source = open(path, O_RDONLY);
-    int target = open(dest, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR); // create ifne, wr only, trunc to 0
+    int target = open(dest, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR); // create ifne, wr only, trunc to 0, args with OCR
     char *tmp = malloc(len * sizeof(char));
 
     for (int i = 0; i < amount; i++){
