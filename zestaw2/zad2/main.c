@@ -65,7 +65,7 @@ static int nftw_display(const char *fpath, const struct stat *file_stat, int typ
 }
 
 
-void file_insider(char *path, char *operant, time_t date) {
+void file_follow(char *path, char *operant, time_t date) {
     if (path == NULL)
         return;
     DIR *dir = opendir(path);
