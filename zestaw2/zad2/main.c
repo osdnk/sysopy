@@ -39,7 +39,7 @@ void print_info(const char *path, const struct stat *file_stat) {
     printf((file_stat->st_mode & S_IXOTH) ? "x" : "-");
     strftime(buffer, buff_size, format, localtime(&file_stat->st_mtime));
     printf(" %s\t", buffer);
-    printf(" %s\t", realpath(path, NULL));
+    printf(" %s\t", path);
     printf("\n");
 }
 
