@@ -23,7 +23,7 @@ double calculate_time(clock_t start, clock_t end) {
 
 int generate(char *path, int amount, int len) {
     FILE *file = fopen(path, "w+"); // write + read
-    FILE *rnd = fopen("/dev/urandom", "r"); // open rand generator
+    FILE *rnd = fopen("/dev/urandom", "r"); // open rand generator. urandom seems to be better
     char *tmp = malloc(len * sizeof(char) + 1);
     for (int i = 0; i < amount; ++i) {
         if (fread(tmp, sizeof(char), (size_t) len + 1, rnd) != len + 1) {
@@ -31,7 +31,7 @@ int generate(char *path, int amount, int len) {
         }
 
         for (int j = 0; j < len; ++j) {
-            tmp[j] = (char) (abs(tmp[j]) % 25 + 65);
+            tmp[j] = (char) (abs(tmp[j]) % 25 + 'a');
         }
 
         tmp[len] = 10;
