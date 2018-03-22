@@ -99,9 +99,6 @@ void file_follow(char *path, char *operant, time_t date) {
                     print_info(new_path, &file_stat);
                 } else if (strcmp(operant, ">") == 0 && date_compare(date, file_stat.st_mtime) < 0) {
                     print_info(new_path, &file_stat);
-                } else {
-                    printf("%s\n", "Dunno this operator :o");
-                    return;
                 }
             }
 
