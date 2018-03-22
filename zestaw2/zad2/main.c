@@ -130,10 +130,10 @@ int main(int argc, char **argv) {
     char *operant = argv[2];
     char *usr_date = argv[3];
 
-    struct tm *tm = malloc(sizeof(struct tm));
+    struct tm *timestamp = malloc(sizeof(struct tm));
 
-    strptime(usr_date, format, tm);
-    time_t date = mktime(tm);
+    strptime(usr_date, format, timestamp);
+    time_t date = mktime(timestamp);
 
 
     DIR *dir = opendir(realpath(path, NULL));
