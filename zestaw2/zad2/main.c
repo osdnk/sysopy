@@ -133,7 +133,6 @@ int main(int argc, char **argv) {
     struct tm *tm = malloc(sizeof(struct tm));
 
     strptime(usr_date, format, tm);
-    strftime(buffer, buff_size, format, tm);
     time_t date = mktime(tm);
 
 
