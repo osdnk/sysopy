@@ -16,10 +16,7 @@
 
 
 const char format[] = "%Y-%m-%d %H:%M:%S";
-int const buff_size = PATH_MAX;
-char buffer[buff_size];
-time_t gdate;
-char *goperant;
+char buffer[PATH_MAX];
 
 double date_compare(time_t date_1, time_t date_2) {
     return difftime(date_1, date_2);
@@ -27,7 +24,6 @@ double date_compare(time_t date_1, time_t date_2) {
 
 void print_info(const char *path, const struct stat *file_stat) {
     printf(" %lld\t", file_stat->st_size);
-    printf((S_ISDIR(file_stat->st_mode)) ? "d" : "-");
     printf((file_stat->st_mode & S_IRUSR) ? "r" : "-");
     printf((file_stat->st_mode & S_IWUSR) ? "w" : "-");
     printf((file_stat->st_mode & S_IXUSR) ? "x" : "-");
@@ -37,13 +33,13 @@ void print_info(const char *path, const struct stat *file_stat) {
     printf((file_stat->st_mode & S_IROTH) ? "r" : "-");
     printf((file_stat->st_mode & S_IWOTH) ? "w" : "-");
     printf((file_stat->st_mode & S_IXOTH) ? "x" : "-");
-    strftime(buffer, buff_size, format, localtime(&file_stat->st_mtime));
+    strftime(buffer, PATH_MAX, format, localtime(&file_stat->st_mtime));
     printf(" %s\t", buffer);
     printf(" %s\t", path);
     printf("\n");
 }
 
-void file_insider(char *path, char *operant, time_t date) {
+void dir_follow(char *path, char *operant, time_t date) {
     if (path == NULL)
         return;
     DIR *dir = opendir(path);
@@ -57,7 +53,7 @@ void file_insider(char *path, char *operant, time_t date) {
     struct dirent *rdir = readdir(dir);
     struct stat file_stat;
 
-    char new_path[buff_size];
+    char new_path[PATH_MAX];
 
     while (rdir != NULL) {
         strcpy(new_path, path);
@@ -65,7 +61,7 @@ void file_insider(char *path, char *operant, time_t date) {
         strcat(new_path, rdir->d_name);
 
 
-        lstat(new_path, &file_stat);
+        lstat(new_path, &file_stat); // with symlinks
 
         if (strcmp(rdir->d_name, ".") == 0 || strcmp(rdir->d_name, "..") == 0) {
             rdir = readdir(dir);
@@ -78,9 +74,6 @@ void file_insider(char *path, char *operant, time_t date) {
                     print_info(new_path, &file_stat);
                 } else if (strcmp(operant, ">") == 0 && date_compare(date, file_stat.st_mtime) < 0) {
                     print_info(new_path, &file_stat);
-                } else {
-                    printf("%s\n", "Dunno this operator :o");
-                    return;
                 }
             }
 
@@ -88,7 +81,7 @@ void file_insider(char *path, char *operant, time_t date) {
             if (S_ISDIR(file_stat.st_mode)) {
                 pid_t fproc;
                 if ((fproc = fork()) == 0) {
-                    file_insider(new_path, operant, date);
+                    dir_follow(new_path, operant, date);
                     exit(0);
                 }
             }
@@ -103,8 +96,8 @@ void file_insider(char *path, char *operant, time_t date) {
 int main(int argc, char **argv) {
 
     if (argc < 4) {
-        printf("need more arguments");
-        exit(EXIT_FAILURE);
+        printf("Bad args!");
+        return 1;
     }
 
 
@@ -112,11 +105,10 @@ int main(int argc, char **argv) {
     char *operant = argv[2];
     char *usr_date = argv[3];
 
-    struct tm *tm = malloc(sizeof(struct tm));
+    struct tm *timestamp = malloc(sizeof(struct tm));
 
-    strptime(usr_date, format, tm);
-    strftime(buffer, buff_size, format, tm);
-    time_t date = mktime(tm);
+    strptime(usr_date, format, timestamp);
+    time_t date = mktime(timestamp);
 
 
     DIR *dir = opendir(realpath(path, NULL));
@@ -125,9 +117,10 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    printf("%s", "\n\n Naive \n\n");
 
-    file_insider(realpath(path, NULL), operant, date);
 
+    dir_follow(realpath(path, NULL), operant, date);
 
     closedir(dir);
 
