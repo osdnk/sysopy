@@ -254,7 +254,7 @@ int main(int argc, char **argv) {
         }
 
     } else {
-        printf("%s", "Are you pretty sure everything if ok?🤔");
+        printf("%s", "Are you pretty sure everything if ok?🤔");`
     }
     real_time[1] = times(tms_time[1]);
     printf("%lf   ", calculate_time(real_time[0], real_time[1]));

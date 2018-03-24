@@ -117,9 +117,6 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    printf("%s", "\n\n Naive \n\n");
-
-
     dir_follow(realpath(path, NULL), operant, date);
 
     closedir(dir);
