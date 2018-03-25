@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/wait.h>
-
+#include <sys/resource.h>
+#include <sys/types.h>
 #include <memory.h>
 #include <stdlib.h>
 
