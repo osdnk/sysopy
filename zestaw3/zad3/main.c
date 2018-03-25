@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
             r_limit_cpu.rlim_cur = (rlim_t) 1;
             if(setrlimit(RLIMIT_CPU, &r_limit_cpu) != 0) {
                 printf("I cannot set this limit cpu 🙅");
-                return -1;
+                return 1;
             }
             execvp(parameters[0], parameters);
         }
