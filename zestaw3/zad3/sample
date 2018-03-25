@@ -1,3 +1,4 @@
 echo hi
-./big_data
+./big_cpu
+./big_cpu sdf sdfsd sfd
 echo hi
