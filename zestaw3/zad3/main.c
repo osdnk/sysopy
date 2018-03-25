@@ -20,7 +20,7 @@ int handle_limits(char *time, char *memory){
     struct rlimit r_limit_cpu;
     r_limit_cpu.rlim_max = (rlim_t) time_limit;
     r_limit_cpu.rlim_cur = (rlim_t) time_limit;
-    if(setrlimit(RLIMIT_CPU, &r_limit_cpu) == -1) {
+    if(setrlimit(RLIMIT_CPU, &r_limit_cpu) != 0) {
         printf("I cannot set this limit cpu 🙅");
         return -1;
     }
@@ -30,7 +30,7 @@ int handle_limits(char *time, char *memory){
     r_limit_memory.rlim_max = (rlim_t) memory_limit;
     r_limit_memory.rlim_cur = (rlim_t) memory_limit;
 
-    if(setrlimit(RLIMIT_AS, &r_limit_memory) == -1) {
+    if(setrlimit(RLIMIT_DATA, &r_limit_memory) != 0) {
         printf("I cannot set this limit memory 🙅");
         return -1;
     }
@@ -60,13 +60,7 @@ int main(int argc, char **argv) {
         };
         pid_t pid = fork();
         if(pid == 0) {
-            struct rlimit r_limit_cpu;
-            r_limit_cpu.rlim_max = (rlim_t) 1;
-            r_limit_cpu.rlim_cur = (rlim_t) 1;
-            if(setrlimit(RLIMIT_CPU, &r_limit_cpu) != 0) {
-                printf("I cannot set this limit cpu 🙅");
-                return 1;
-            }
+            handle_limits(argv[2], argv[3]);
             execvp(parameters[0], parameters);
         }
         int status;
