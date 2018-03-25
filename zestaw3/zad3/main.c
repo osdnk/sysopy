@@ -2,7 +2,7 @@
 // Created by Michał Osadnik on 22/03/2018.
 //
 
-
+#define _BSD_SOURCE
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/wait.h>
