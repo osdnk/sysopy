@@ -29,8 +29,8 @@ int handle_limits(char *time, char *memory) {
 
     unsigned long int memory_limit = strtol(memory, NULL, 10);
     struct rlimit r_limit_memory;
-    r_limit_memory.rlim_max = (rlim_t) memory_limit;
-    r_limit_memory.rlim_cur = (rlim_t) memory_limit;
+    r_limit_memory.rlim_max = (rlim_t) memory_limit * 1024 * 1024;
+    r_limit_memory.rlim_cur = (rlim_t) memory_limit * 1024 * 1024;
 
     if (setrlimit(RLIMIT_DATA, &r_limit_memory) != 0) {
         printf("I cannot set this limit memory 🙅");
