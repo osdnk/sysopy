@@ -7,23 +7,23 @@
 
 void horse_fast_rider();
 
-void horse_faster_rider() {
-    horse_fast_rider();
+void horse_faster_rider(int i) {
+    int n = (i + 1) % 10000;
+    if (n == 0) {
+        printf("Pls, staph, sir!\n");
+    }
+    horse_fast_rider(n);
 }
 
-void horse_fast_rider() {
-    struct timespec tim, tim2;
-    tim.tv_sec = 0;
-    tim.tv_nsec = 5000;
+void horse_fast_rider(int i) {
     int *arr = malloc(100000 * sizeof(int));
-    for (int i=0; i<100000; i++) {
-	    arr[i]=i;
+    for (int j=0; j<100000; j++) {
+	    arr[j]=j;
     }
     free(arr);
-    horse_fast_rider();
-    horse_fast_rider();
+    horse_faster_rider(i+1);
 }
 
 int main() {
-    horse_fast_rider();
+    horse_fast_rider(0);
 }
