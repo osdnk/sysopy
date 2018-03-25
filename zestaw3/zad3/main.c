@@ -6,29 +6,31 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/wait.h>
+
 #include <memory.h>
 #include <stdlib.h>
+
 
 #define max_number_of_arguments 64
 #define max_number_of_line 256
 
 int handle_limits(char *cpu, char *memory){
-    unsigned long int cpu_limit = strtol(cpuArg, NULL, 10);
+    unsigned long int cpu_limit = strtol(cpu, NULL, 10);
     struct rlimit r_limit_cpu;
-    r_limit_cpu.rlim_max = (rlim_t) cpuLimit;
-    r_limit_cpu.rlim_cur = (rlim_t) cpuLimit;
+    r_limit_cpu.rlim_max = (rlim_t) cpu_limit;
+    r_limit_cpu.rlim_cur = (rlim_t) cpu_limit;
     if(setrlimit(RLIMIT_CPU, &r_limit_cpu) == -1) {
         printf("I cannot set this limit cpu 🙅");
         return -1;
     }
 
-    unsigned long int memory_limit = strtol(memArg, NULL, 10) * 1024 * 1024;
+    unsigned long int memory_limit = strtol(memory, NULL, 10) * 1024 * 1024;
     struct rlimit r_limit_memory;
-    r_limit_memory.rlim_max = (rlim_t) memLimit;
-    r_limit_memory.rlim_cur = (rlim_t) memLimit;
+    r_limit_memory.rlim_max = (rlim_t) memory_limit;
+    r_limit_memory.rlim_cur = (rlim_t) memory_limit;
 
-    if(setrlimit(RLIMIT_AF, &r_limit_memory) == -1) {
-        prinntf("I cannot set this limit memory 🙅");
+    if(setrlimit(RLIMIT_AS, &r_limit_memory) == -1) {
+        printf("I cannot set this limit memory 🙅");
         return -1;
     }
     return 0;
