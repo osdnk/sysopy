@@ -72,10 +72,6 @@ int main(int argc, char **argv) {
         wait(&status);
         if (status) {
             printf("Error while running command: ");
-            for (int i = 0; i < argument_number; i++) {
-                printf("%s ", parameters[i]);
-            }
-            printf("\n");
         }
         struct rusage usage;
         getrusage(RUSAGE_CHILDREN, &usage);
@@ -84,7 +80,11 @@ int main(int argc, char **argv) {
         timersub(&usage.ru_utime, &prev_usage.ru_utime, &ru_utime);
         timersub(&usage.ru_stime, &prev_usage.ru_stime, &ru_stime);
         prev_usage = usage;
-        printf("User CPU time used: %d.%d seconds,  system CPU time used: %d.%d seconds\n", (int) ru_utime.tv_sec,
+        for (int i = 0; i < argument_number; i++) {
+            printf("%s ", parameters[i]);
+        }
+        printf("\n");
+        printf("User CPU time used: %d.%d seconds,  system CPU time used: %d.%d seconds\n\n", (int) ru_utime.tv_sec,
                (int) ru_utime.tv_usec, (int) ru_stime.tv_sec, (int) ru_stime.tv_usec);
     }
     fclose(file);
