@@ -14,17 +14,17 @@
 #define max_number_of_arguments 64
 #define max_number_of_line 256
 
-int handle_limits(char *cpu, char *memory){
-    unsigned long int cpu_limit = strtol(cpu, NULL, 10);
+int handle_limits(char *time, char *memory){
+    unsigned long int time_limit = strtol(time, NULL, 10);
     struct rlimit r_limit_cpu;
-    r_limit_cpu.rlim_max = (rlim_t) cpu_limit;
-    r_limit_cpu.rlim_cur = (rlim_t) cpu_limit;
+    r_limit_cpu.rlim_max = (rlim_t) time_limit;
+    r_limit_cpu.rlim_cur = (rlim_t) time_limit;
     if(setrlimit(RLIMIT_CPU, &r_limit_cpu) == -1) {
         printf("I cannot set this limit cpu 🙅");
         return -1;
     }
 
-    unsigned long int memory_limit = strtol(memory, NULL, 10) * 1024 * 1024;
+    unsigned long int memory_limit = strtol(memory, NULL, 10);
     struct rlimit r_limit_memory;
     r_limit_memory.rlim_max = (rlim_t) memory_limit;
     r_limit_memory.rlim_cur = (rlim_t) memory_limit;
@@ -59,7 +59,13 @@ int main(int argc, char **argv) {
         };
         pid_t pid = fork();
         if(pid == 0) {
-            handle_limits(argv[2], argv[3]);
+            struct rlimit r_limit_cpu;
+            r_limit_cpu.rlim_max = (rlim_t) 1;
+            r_limit_cpu.rlim_cur = (rlim_t) 1;
+            if(setrlimit(RLIMIT_CPU, &r_limit_cpu) != 0) {
+                printf("I cannot set this limit cpu 🙅");
+                return -1;
+            }
             execvp(parameters[0], parameters);
         }
         int status;
