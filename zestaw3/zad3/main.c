@@ -60,7 +60,11 @@ int main(int argc, char **argv) {
         while ((parameters[argument_number] = strtok(argument_number == 0 ? temp_registry : NULL, " \n\t")) != NULL) {
             argument_number++;
             if (argument_number >= max_number_of_arguments) {
-                fprintf(stderr, "You gave tooo many arguments sir to %s 🤔", parameters[0]);
+                printf( "You gave tooo many arguments sir to 🤔:");
+                for (int i = 0; i < argument_number; i++) {
+                    printf("%s ", parameters[i]);
+                }
+                return 1;
             }
         };
         pid_t pid = fork();
@@ -72,7 +76,11 @@ int main(int argc, char **argv) {
         int status;
         wait(&status);
         if (status) {
-            printf("Error while running command: ");
+            printf( "Error while executing 🤔:");
+            for (int i = 0; i < argument_number; i++) {
+                printf("%s ", parameters[i]);
+            }
+            return 1;
         }
         struct rusage usage;
         getrusage(RUSAGE_CHILDREN, &usage);
