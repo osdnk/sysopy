@@ -25,17 +25,17 @@ int handle_limits(char *time, char *memory) {
     if (setrlimit(RLIMIT_CPU, &r_limit_cpu) != 0) {
         printf("I cannot set this limit cpu 🙅"
                        "");
-        return -1;
+        return 1;
     }
 
-    long int memory_limit = strtol(memory, NULL, 10);
+    long int memory_limit = strtol(memory, NULL, 10) * 1024 * 1024;
     struct rlimit r_limit_memory;
-    r_limit_memory.rlim_max = (rlim_t) memory_limit * 1024 * 1024;
-    r_limit_memory.rlim_cur = (rlim_t) memory_limit * 1024 * 1024;
+    r_limit_memory.rlim_max = (rlim_t) memory_limit;
+    r_limit_memory.rlim_cur = (rlim_t) memory_limit;
 
-    if (setrlimit(RLIMIT_DATA, &r_limit_memory) != 0) {
+    if (setrlimit(RLIMIT_AS, &r_limit_memory) != 0) {
         printf("I cannot set this limit memory 🙅");
-        return -1;
+        return 1;
     }
     return 0;
 }
