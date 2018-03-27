@@ -18,16 +18,17 @@
 
 
 int handle_limits(char *time, char *memory) {
-    unsigned long int time_limit = strtol(time, NULL, 10);
+    long int time_limit = strtol(time, NULL, 10);
     struct rlimit r_limit_cpu;
     r_limit_cpu.rlim_max = (rlim_t) time_limit;
     r_limit_cpu.rlim_cur = (rlim_t) time_limit;
     if (setrlimit(RLIMIT_CPU, &r_limit_cpu) != 0) {
-        printf("I cannot set this limit cpu 🙅");
+        printf("I cannot set this limit cpu 🙅"
+                       "");
         return -1;
     }
 
-    unsigned long int memory_limit = strtol(memory, NULL, 10);
+    long int memory_limit = strtol(memory, NULL, 10);
     struct rlimit r_limit_memory;
     r_limit_memory.rlim_max = (rlim_t) memory_limit * 1024 * 1024;
     r_limit_memory.rlim_cur = (rlim_t) memory_limit * 1024 * 1024;
