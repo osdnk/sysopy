@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <sys/types.h>
 
 #define max_number_of_arguments 64
 #define max_number_of_line 256
