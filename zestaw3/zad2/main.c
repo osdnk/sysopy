@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
         }
         int status;
         wait(&status);
-        if (!status) {
+        if (status) {
             printf( "Error while executing 🤔:");
             for (int i = 0; i < argument_number; i++) {
                 printf("%s ", parameters[i]);
