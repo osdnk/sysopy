@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 int main() {
-    int *dummy_array = malloc(sizeof(int) * 1000000000);
-    for (int i = 0; i< 1000000000; i++) {
+    int *dummy_array = malloc(sizeof(int) * 10000000000);
+    for (int i = 0; i< 10000000000; i++) {
         dummy_array[i] = 9;
     }
 }
