@@ -4,4 +4,4 @@ This special repo is made to provide solutions for SO course
  
 License
 ---
-penis.js is currently under [**Giant Penis License (GPL)**](http://giant-penis-license.org) which is a deformed M.I.T license including penis text art.
+sysopy is currently under [**Giant Penis License (GPL)**](http://giant-penis-license.org) which is a deformed M.I.T license including penis text art.
