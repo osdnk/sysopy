@@ -5,7 +5,7 @@
 #include <signal.h>
 
 int awaiting_handler = 0;
-int id_dead_process_handler = 0;
+int is_dead_process_handler = 0;
 pid_t pid = 0;
 
 void stop_signal_toggle(int sig_num) {
@@ -38,20 +38,19 @@ int main(int argc, char** argv) {
         signal(SIGINT,init_signal);
 
         if(awaiting_handler == 0) {
-            if(id_dead_process_handler){
-                id_dead_process_handler = 0;
+            if(is_dead_process_handler){
+                is_dead_process_handler = 0;
 
                 pid = fork();
                 if (pid == 0){
                     execl("./dater.sh", "./dater.sh", NULL);
                     exit(EXIT_SUCCESS);
                 }
-
             }
         } else {
-            if (id_dead_process_handler == 0) {
+            if (is_dead_process_handler == 0) {
                 kill(pid, SIGKILL);
-                id_dead_process_handler = 1;
+                is_dead_process_handler = 1;
             }
         }
     }

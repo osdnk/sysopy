@@ -27,17 +27,16 @@ int main(int argc, char** argv) {
     sigemptyset(&actions.sa_mask);
 
 
-    while(1){
-        sigaction(SIGTSTP, &actions,NULL);
-        signal(SIGINT,init_signal);
+    while(1) {
+        sigaction(SIGTSTP, &actions, NULL);
+        signal(SIGINT, init_signal);
 
-        if(awaiting_handler)
-            continue;
-
-        char buffer[30];
-        act_time = time(NULL);
-        strftime(buffer, sizeof(buffer),"%H:%M:%S",localtime(&act_time));
-        printf("%s\n",buffer);
+        if (!awaiting_handler) {
+            char buffer[30];
+            act_time = time(NULL);
+            strftime(buffer, sizeof(buffer), "%H:%M:%S", localtime(&act_time));
+            printf("%s\n", buffer);
+        }
         sleep(1);
     }
 }
