@@ -5,6 +5,8 @@
 #include <signal.h>
 
 int awaiting_handler = 0;
+int id_dead_process_handler = 0;
+pid_t pid = 0;
 
 void stop_signal_toggle(int sig_num) {
     if(awaiting_handler == 0) {
@@ -23,21 +25,34 @@ int main(int argc, char** argv) {
     struct sigaction actions;
     actions.sa_handler = stop_signal_toggle;
     actions.sa_flags = 0;
-    time_t act_time;
     sigemptyset(&actions.sa_mask);
 
+    pid = fork();
+    if (pid == 0){
+        execl("./dater.sh", "./dater.sh", NULL);
+        exit(EXIT_SUCCESS);
+    }
 
     while(1){
         sigaction(SIGTSTP, &actions,NULL);
         signal(SIGINT,init_signal);
 
-        if(awaiting_handler)
-            continue;
+        if(awaiting_handler == 0) {
+            if(id_dead_process_handler){
+                id_dead_process_handler = 0;
 
-        char buffer[30];
-        act_time = time(NULL);
-        strftime(buffer, sizeof(buffer),"%H:%M:%S",localtime(&act_time));
-        printf("%s\n",buffer);
-        sleep(1);
+                pid = fork();
+                if (pid == 0){
+                    execl("./dater.sh", "./dater.sh", NULL);
+                    exit(EXIT_SUCCESS);
+                }
+
+            }
+        } else {
+            if (id_dead_process_handler == 0) {
+                kill(pid, SIGKILL);
+                id_dead_process_handler = 1;
+            }
+        }
     }
 }
