@@ -91,19 +91,17 @@ int execute_line(char * parameters) {
             }
             if ( i  < command_number) {
                 close(pipes[i % 2][0]);
-                if (dup2(pipes[i % 2][1], 1) < 0) {
+                if (dup2(pipes[i % 2][1], STDOUT_FILENO) < 0) {
                     exit(EXIT_FAILURE);
                 };
             }
             if (i != 0) {
                 close(pipes[(i + 1) % 2][1]);
-                if (dup2(pipes[(i + 1) % 2][0], 0) < 0) {
+                if (dup2(pipes[(i + 1) % 2][0], STDIN_FILENO) < 0) {
                     close(EXIT_FAILURE);
                 }
             }
             execvp(exec_params[0], exec_params);
-
-            // close(pipes[0][1]);
 
             exit(EXIT_SUCCESS);
         }
