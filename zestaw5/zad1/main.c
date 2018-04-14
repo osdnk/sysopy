@@ -76,7 +76,7 @@ int execute_line(char * parameters) {
             close(pipes[command_number % 2][1]);
         }
 
-        if(pipe(pipes[i]) == -1) {
+        if(pipe(pipes[i % 2]) == -1) {
             printf("Error on pipe.\n");
             exit(EXIT_FAILURE);
         }
