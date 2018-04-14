@@ -16,9 +16,9 @@
 #define max_number_of_commands 100
 
 
-char* trim_white(char *origStr){
+char* trim_white(char *orig_str){
     char* buffer = malloc(sizeof(char) * 200);
-    char* i = origStr;
+    char* i = orig_str;
     while(*i == ' ') i++;
     int j = 0;
     while(*i != 0){
@@ -30,7 +30,7 @@ char* trim_white(char *origStr){
             while(*i == ' ') i++;
             if (*i != 0)
                 buffer[j++] = ' ';
-        }
+            }
     }
     buffer[j+1] = 0;
     return buffer;
@@ -138,8 +138,7 @@ int main(int argc, char **argv) {
         pid_t pid = fork();
         if(pid == 0) {
             execute_line(temp_registry);
-            //execvp(parameters[0], parameters);
-            exit(1);
+            exit(EXIT_SUCCESS);
         }
         int status;
         wait(&status);
