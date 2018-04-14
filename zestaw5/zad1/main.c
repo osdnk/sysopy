@@ -11,8 +11,9 @@
 
 
 
-#define max_number_of_commands 64
+#define max_number_of_params 64
 #define max_number_of_line 256
+#define max_number_of_commands 100
 
 
 char* trim_white(char *origStr){
@@ -59,38 +60,57 @@ char** parse_program_arguments(char *line){
 
 
 int execute_line(char * parameters) {
-    char * tmp_reg;
     int command_number = 0;
-    int pipes[100][2];
+    int pipes[2][2];
+    char *cmds[max_number_of_commands];
 
 
-    while((tmp_reg = strtok(command_number == 0 ? parameters : NULL, "|")) != NULL){
+    while((cmds[command_number] = strtok(command_number == 0 ? parameters : NULL, "|")) != NULL){
+        command_number++;
+    };
+
+    for (int i = 0; i < command_number; i++) {
+
+        if (command_number > 1) {
+            close(pipes[command_number % 2][0]);
+            close(pipes[command_number % 2][1]);
+        }
+
+        if(pipe(pipes[i]) == -1) {
+            printf("Error on pipe.\n");
+            exit(EXIT_FAILURE);
+        }
         pid_t cp = fork();
         if (cp == 0) {
-            if (command_number == 0) {
-                dup2(pipes[0][1], STDOUT_FILENO);
-            }
+            char ** exec_params = parse_program_arguments(trim_white(cmds[i]));
+            for(int j = 0; exec_params[j] != NULL; j++) printf("%s ", exec_params[j]);
+            printf("\n");
 
-            if (command_number == 1) {
-                dup2(pipes[0][0], STDIN_FILENO);
-            }
-
-            char ** exec_params = parse_program_arguments(trim_white(tmp_reg));
             if(execvp(exec_params[0], exec_params) == -1) {
                 printf("Error occured on execution: ");
-                for(int j = 0; exec_params[j] != NULL; j++) printf("%s ", exec_params[j]);
-                printf("\n");
             }
+            if ( i  < command_number) {
+                close(pipes[i % 2][0]);
+                if (dup2(pipes[i % 2][1], 1) < 0) {
+                    exit(EXIT_FAILURE);
+                };
+            }
+            if (i != 0) {
+                close(pipes[(i + 1) % 2][1]);
+                if (dup2(pipes[(i + 1) % 2][0], 0) < 0) {
+                    close(EXIT_FAILURE);
+                }
+            }
+            execvp(exec_params[0], exec_params);
 
             // close(pipes[0][1]);
 
             exit(EXIT_SUCCESS);
         }
+        close(pipes[i % 2][0]);
+        close(pipes[i % 2][1]);
         wait(NULL);
-        command_number++;
-    };
-
-    printf("%s", "213");
+    }
     exit(0);
 }
 
@@ -106,13 +126,13 @@ int main(int argc, char **argv) {
         return 1;
     }
     char temp_registry[max_number_of_line];
-    char *parameters[max_number_of_commands];
+    char *parameters[max_number_of_params];
     int argument_number = 0;
     while(fgets(temp_registry, max_number_of_line, file)){
         argument_number = 0;
         /*while((parameters[argument_number] = strtok(argument_number == 0 ? temp_registry : NULL, " \n\t")) != NULL){
             argument_number++;
-            if(argument_number >= max_number_of_commands){
+            if(argument_number >= max_number_of_params){
                 printf( "You gave tooo many arguments sir to 🤔:");
                 for (int i = 0; i < argument_number; i++) {
                     printf("%s ", parameters[i]);
