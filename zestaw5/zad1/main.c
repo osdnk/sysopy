@@ -83,6 +83,7 @@ int execute_line(char * parameters) {
         pid_t cp = fork();
         if (cp == 0) {
             char ** exec_params = parse_program_arguments(trim_white(cmds[i]));
+
             if ( i  !=  command_number - 1) {
                 close(pipes[i % 2][0]);
                 if (dup2(pipes[i % 2][1], STDOUT_FILENO) < 0) {
@@ -99,6 +100,7 @@ int execute_line(char * parameters) {
 
             exit(EXIT_SUCCESS);
         }
+        //close(pipes[i % 2][0]);
         close(pipes[i % 2][1]);
         wait(NULL);
     }
