@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 
-#define LINE_MAX 256
+#define LINE_MAX 4
 
 int main(int argc, char** argv) {
     if (argc < 3) {
@@ -15,10 +15,15 @@ int main(int argc, char** argv) {
 
     char buffer1[LINE_MAX];
 
+    char * A[5];
+    A[0] = "123\n";
+    A[1] = "1d3\n";
+    A[2] = "323\n";
+    A[3] = "f23\n";
+    A[4] = "1gg\n";
+
     for (int i = 0; i < 5; i++) {
-       /* FILE* date = popen("date", "r");
-        fgets(buffer1, LINE_MAX, date)*/;
-        write(pipe, "komunikat\n", LINE_MAX);
+        write(pipe, A[i], LINE_MAX);
         sleep(1);
     }
     close(pipe);

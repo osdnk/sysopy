@@ -7,7 +7,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define LINE_MAX 256
+#define LINE_MAX 4
 
 int main(int argc, char **argv) {
     mkfifo("./kk", S_IWUSR | S_IRUSR);
@@ -15,8 +15,7 @@ int main(int argc, char **argv) {
 
     FILE *pipe = fopen("./kk", "r");
     while (fgets(buffer, LINE_MAX, pipe) != NULL) {
-        printf("%s", buffer);
-        //write(STDOUT_FILENO, buffer, strlen(buffer));
+        write(STDOUT_FILENO, buffer, LINE_MAX);
     }
     fclose(pipe);
     return 0;
