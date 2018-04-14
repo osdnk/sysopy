@@ -23,4 +23,4 @@ add_executable(sysopy
         zestaw3/zad2/main.c
         zestaw3/zad3/big_cpu.c
         zestaw3/zad3/big_data.c
-        zestaw3/zad3/main.c zestaw4/zad3/main.c)
+        zestaw3/zad3/main.c zestaw4/zad3/main.c zestaw5/zad1/main.c)
