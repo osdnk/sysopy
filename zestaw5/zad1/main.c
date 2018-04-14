@@ -71,7 +71,7 @@ int execute_line(char * parameters) {
 
     for (int i = 0; i < command_number; i++) {
 
-        if (i > 1) {
+        if (i > 0) {
             close(pipes[i % 2][0]);
             close(pipes[i % 2][1]);
         }
@@ -83,8 +83,8 @@ int execute_line(char * parameters) {
         pid_t cp = fork();
         if (cp == 0) {
             char ** exec_params = parse_program_arguments(trim_white(cmds[i]));
-            for(int j = 0; exec_params[j] != NULL; j++) printf("%s ", exec_params[j]);
-            printf("\n");
+           // for(int j = 0; exec_params[j] != NULL; j++) printf("%s ", exec_params[j]);
+            //printf("\n");
 
             if ( i  !=  command_number - 1) {
                 close(pipes[i % 2][0]);
