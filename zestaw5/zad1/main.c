@@ -68,8 +68,8 @@ int execute_line(char * parameters) {
     while((cmds[command_number] = strtok(command_number == 0 ? parameters : NULL, "|")) != NULL){
         command_number++;
     };
-
-    for (int i = 0; i < command_number; i++) {
+    int i;
+    for (i = 0; i < command_number; i++) {
 
         if (i > 0) {
             close(pipes[i % 2][0]);
@@ -100,10 +100,10 @@ int execute_line(char * parameters) {
 
             exit(EXIT_SUCCESS);
         }
-        //close(pipes[i % 2][0]);
-        close(pipes[i % 2][1]);
-        wait(NULL);
     }
+    close(pipes[i % 2][0]);
+    close(pipes[i % 2][1]);
+    wait(NULL);
     exit(0);
 }
 
