@@ -3,27 +3,26 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <memory.h>
 
-#define LINE_MAX 4
+#define LINE_MAX 256
 
 int main(int argc, char** argv) {
     if (argc < 3) {
         exit(EXIT_FAILURE);
     }
-    int pipe = open("./kk", O_WRONLY);
-
+    int pipe = open(argv[1], O_WRONLY);
 
     char buffer1[LINE_MAX];
+    char buffer2[LINE_MAX];
 
-    char * A[5];
-    A[0] = "123\n";
-    A[1] = "1d3\n";
-    A[2] = "323\n";
-    A[3] = "f23\n";
-    A[4] = "1gg\n";
-
-    for (int i = 0; i < 5; i++) {
-        write(pipe, A[i], LINE_MAX);
+    int it = (int) strtol(argv[2], NULL, 10);
+    for (int i = 0; i < it; i++) {
+        FILE *date = popen("date", "r");
+        fgets(buffer1, LINE_MAX, date);
+        int pid = getpid();
+        sprintf(buffer2, "Slave: %d - %s", pid, buffer1);
+        write(pipe, buffer2, strlen(buffer2));
         sleep(1);
     }
     close(pipe);

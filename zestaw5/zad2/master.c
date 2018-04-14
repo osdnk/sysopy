@@ -7,15 +7,18 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define LINE_MAX 4
+#define LINE_MAX 256
 
 int main(int argc, char **argv) {
-    mkfifo("./kk", S_IWUSR | S_IRUSR);
+    if (argc < 2) {
+        exit(EXIT_FAILURE);
+    }
+    mkfifo(argv[1], S_IWUSR | S_IRUSR);
     char buffer[LINE_MAX];
 
-    FILE *pipe = fopen("./kk", "r");
+    FILE *pipe = fopen(argv[1], "r");
     while (fgets(buffer, LINE_MAX, pipe) != NULL) {
-        write(STDOUT_FILENO, buffer, LINE_MAX);
+        write(1, buffer, strlen(buffer));
     }
     fclose(pipe);
     return 0;
