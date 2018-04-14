@@ -71,9 +71,9 @@ int execute_line(char * parameters) {
 
     for (int i = 0; i < command_number; i++) {
 
-        if (command_number > 1) {
-            close(pipes[command_number % 2][0]);
-            close(pipes[command_number % 2][1]);
+        if (i > 1) {
+            close(pipes[i % 2][0]);
+            close(pipes[i % 2][1]);
         }
 
         if(pipe(pipes[i % 2]) == -1) {
@@ -86,10 +86,8 @@ int execute_line(char * parameters) {
             for(int j = 0; exec_params[j] != NULL; j++) printf("%s ", exec_params[j]);
             printf("\n");
 
-            if(execvp(exec_params[0], exec_params) == -1) {
-                printf("Error occured on execution: ");
-            }
             if ( i  < command_number) {
+                printf("set %d to out", i);
                 close(pipes[i % 2][0]);
                 if (dup2(pipes[i % 2][1], STDOUT_FILENO) < 0) {
                     exit(EXIT_FAILURE);
@@ -97,6 +95,7 @@ int execute_line(char * parameters) {
             }
             if (i != 0) {
                 close(pipes[(i + 1) % 2][1]);
+                printf("set %d to in", i);
                 if (dup2(pipes[(i + 1) % 2][0], STDIN_FILENO) < 0) {
                     close(EXIT_FAILURE);
                 }
