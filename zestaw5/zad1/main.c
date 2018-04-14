@@ -87,7 +87,6 @@ int execute_line(char * parameters) {
             printf("\n");
 
             if ( i  !=  command_number - 1) {
-                printf("set %d to out", i);
                 close(pipes[i % 2][0]);
                 if (dup2(pipes[i % 2][1], STDOUT_FILENO) < 0) {
                     exit(EXIT_FAILURE);
@@ -95,7 +94,6 @@ int execute_line(char * parameters) {
             }
             if (i != 0) {
                 close(pipes[(i + 1) % 2][1]);
-                printf("set %d to in", i);
                 if (dup2(pipes[(i + 1) % 2][0], STDIN_FILENO) < 0) {
                     close(EXIT_FAILURE);
                 }
