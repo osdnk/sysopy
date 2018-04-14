@@ -86,7 +86,7 @@ int execute_line(char * parameters) {
             for(int j = 0; exec_params[j] != NULL; j++) printf("%s ", exec_params[j]);
             printf("\n");
 
-            if ( i  < command_number  - 1) {
+            if ( i  !=  command_number) {
                 printf("set %d to out", i);
                 close(pipes[i % 2][0]);
                 if (dup2(pipes[i % 2][1], STDOUT_FILENO) < 0) {
