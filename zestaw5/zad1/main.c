@@ -83,9 +83,6 @@ int execute_line(char * parameters) {
         pid_t cp = fork();
         if (cp == 0) {
             char ** exec_params = parse_program_arguments(trim_white(cmds[i]));
-           // for(int j = 0; exec_params[j] != NULL; j++) printf("%s ", exec_params[j]);
-            //printf("\n");
-
             if ( i  !=  command_number - 1) {
                 close(pipes[i % 2][0]);
                 if (dup2(pipes[i % 2][1], STDOUT_FILENO) < 0) {
@@ -102,7 +99,6 @@ int execute_line(char * parameters) {
 
             exit(EXIT_SUCCESS);
         }
-        close(pipes[i % 2][0]);
         close(pipes[i % 2][1]);
         wait(NULL);
     }
@@ -125,16 +121,6 @@ int main(int argc, char **argv) {
     int argument_number = 0;
     while(fgets(temp_registry, max_number_of_line, file)){
         argument_number = 0;
-        /*while((parameters[argument_number] = strtok(argument_number == 0 ? temp_registry : NULL, " \n\t")) != NULL){
-            argument_number++;
-            if(argument_number >= max_number_of_params){
-                printf( "You gave tooo many arguments sir to 🤔:");
-                for (int i = 0; i < argument_number; i++) {
-                    printf("%s ", parameters[i]);
-                }
-                return 1;
-            }
-        };*/
         pid_t pid = fork();
         if(pid == 0) {
             execute_line(temp_registry);

@@ -1,1 +1,1 @@
-ls -l | grep "Apr" | sort +4n | wc
+who | sort | uniq -c | sort -n
