@@ -28,10 +28,10 @@ add_executable(sysopy
         zestaw5/zad2/master.c
         zestaw5/zad2/slave.c
         zestaw7/zad1/barber.c
-        zestaw7/zad1/clients.c
-        zestaw7/zad1/common.h
+        zestaw7/zad1/handler_of_clients.c
+        zestaw7/zad1/shared_utils.h
         zestaw7/zad2/barber.c
-        zestaw7/zad2/clients.c
-        zestaw7/zad2/common.h
+        zestaw7/zad2/handler_of_clients.c
+        zestaw7/zad2/shared_utils.h
 
         )

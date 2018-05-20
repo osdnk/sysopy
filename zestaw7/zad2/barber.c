@@ -12,7 +12,7 @@
 #include <semaphore.h>
 #include <unistd.h>
 
-#include "common.h"
+#include "shared_utils.h"
 
 int shared_memory_fd;
 sem_t* semaphore;

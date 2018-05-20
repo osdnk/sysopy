@@ -2,51 +2,35 @@
 #include <stdlib.h>
 #include <time.h>
 #include <errno.h>
-#include <fcntl.h>
 #include <sys/wait.h>
 #include <sys/sem.h>
 #include <sys/shm.h>
-#include <sys/ipc.h>
 #include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
 #include <signal.h>
-#include <semaphore.h>
 #include <unistd.h>
 
-#include "common.h"
+#include "shared_utils.h"
 
 
 enum Client_status status;
-int shared_memory_fd;
-sem_t* semaphore;
-
+int id_of_shared_memory;
+int sem_id;
 
 void initialize_clients() {
-    shared_memory_fd = shm_open(PROJECT_PATH, O_RDWR, S_IRWXU | S_IRWXG);
+    key_t id_of_project = ftok(PROJECT_PATH, PROJECT_ID);
+    if (id_of_project == -1)
+        FAIL("Error while getting key\n")
 
-    if (shared_memory_fd == -1)
+    id_of_shared_memory = shmget(id_of_project, sizeof(struct Barber_info), 0);
+    if (id_of_shared_memory == -1)
         FAIL("Couldn't create shared memory\n")
 
-    // Truncate file
-    int error = ftruncate(shared_memory_fd, sizeof(*barbershop));
-
-    if (error == -1)
-        FAIL("Failed truncating file\n");
-
-    barbershop = mmap(NULL,
-                      sizeof(*barbershop),
-                      PROT_READ | PROT_WRITE,
-                      MAP_SHARED,
-                      shared_memory_fd,
-                      0);
-
+    barbershop = shmat(id_of_shared_memory, 0, 0);
     if (barbershop == (void*) -1)
         FAIL("Couldn't access shared memory\n")
 
-    semaphore = sem_open(PROJECT_PATH, O_WRONLY, S_IRWXU | S_IRWXG, 0);
-
-    if (semaphore == (void*) -1)
+    sem_id = semget(id_of_project, 0, 0);
+    if (sem_id == -1)
         FAIL("Couldn't create semaphore\n")
 }
 
@@ -57,8 +41,8 @@ void take_barbers_chair() {
         pop_queue();
     } else if (status == JUST_ARRIVED) {
         while (1) {
-            release_sem(semaphore);
-            take_sem(semaphore);
+            release_sem(sem_id);
+            take_sem(sem_id);
             if (barbershop->status_of_barber == READY_FOR_SHAVING) break;
         }
         status = INVITED;
@@ -68,53 +52,54 @@ void take_barbers_chair() {
 }
 
 void trigger_barbers_client(int number_of_shaves) {
-    pid_t current_client_pid = getpid();
+    pid_t current_clients_pid = getpid();
     int cuts_already_done = 0;
 
     while (cuts_already_done < number_of_shaves) {
         status = JUST_ARRIVED;
 
-        take_sem(semaphore);
+        take_sem(sem_id);
 
         if (barbershop->status_of_barber == SLEEPING_INACTIVE) {
-            printf("%lo #%i: woke up the barber\n", current_time(), current_client_pid);
+            printf("%lo #%i: woke up the barber\n", current_time(), current_clients_pid);
             barbershop->status_of_barber = AWAKEN_BY_CLIENT;
             take_barbers_chair();
             barbershop->status_of_barber = SHAVING_CLIENT;
         } else if (!queue_full()) {
-            get_in_queue(current_client_pid);
-            printf("%lo #%i: entering the fifo_queue_of_clients\n", current_time(), current_client_pid);
+            get_in_queue(current_clients_pid);
+            printf("%lo #%i: entering the fifo_queue_of_clients\n", current_time(), current_clients_pid);
         } else {
-            printf("%lo #%i: could not find place in the fifo_queue_of_clients\n", current_time(), current_client_pid);
-            release_sem(semaphore);
+            printf("%lo #%i: could not find place in the fifo_queue_of_clients\n", current_time(), current_clients_pid);
+            release_sem(sem_id);
             return;
         }
 
-        release_sem(semaphore);
+        release_sem(sem_id);
 
-        while(status < INVITED) {
-            take_sem(semaphore);
-            if (barbershop->current_client == current_client_pid) {
+        while(status != INVITED) {
+            take_sem(sem_id);
+            if (barbershop->current_client == current_clients_pid) {
                 status = INVITED;
                 take_barbers_chair();
                 barbershop->status_of_barber = SHAVING_CLIENT;
             }
-            release_sem(semaphore);
+            release_sem(sem_id);
         }
 
-        while(status < SHAVED) {
-            take_sem(semaphore);
-            if (barbershop->current_client != current_client_pid) {
+        while(status != SHAVED) {
+            take_sem(sem_id);
+            if (barbershop->current_client != current_clients_pid) {
                 status = SHAVED;
-                printf("%lo #%i: shaved\n", current_time(), current_client_pid);
+                printf("%lo #%i: shaved\n", current_time(), current_clients_pid);
                 barbershop->status_of_barber = IDLE;
                 cuts_already_done++;
             }
-            release_sem(semaphore);
+            release_sem(sem_id);
         }
     }
-    printf("%lo #%i: left barbershop after %i cuts_already_done\n", current_time(), current_client_pid, number_of_shaves);
+    printf("%lo #%i: left barbershop after %i cuts_already_done\n", current_time(), current_clients_pid, number_of_shaves);
 }
+
 
 int main(int argc, char** argv) {
     if (argc < 3) FAIL("Not enough arguments provided\n")

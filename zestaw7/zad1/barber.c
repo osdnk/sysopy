@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <signal.h>
-#include "common.h"
+#include "shared_utils.h"
 
 int id_of_shared_memory;
 int sem_id;

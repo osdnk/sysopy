@@ -3,13 +3,13 @@ CFLAGS=-Wall -std=gnu99
 
 .PHONY: clean
 
-all: clients barber
+all: handler_of_clients barber
 
-clients: clients.c
+handler_of_clients: handler_of_clients.c
 	$(CC) $< -o $@ $(CFLAGS)
 
 barber: barber.c
 	$(CC) $< -o $@ $(CFLAGS)
 
 clean:
-	rm {clients,barber} 2> /dev/null
+	rm {handler_of_clients,barber} 2> /dev/null
