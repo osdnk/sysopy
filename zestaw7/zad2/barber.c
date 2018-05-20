@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
     release_sem(semaphore);
 
     while(1) {
-        get_sem(semaphore);
+        take_sem(semaphore);
 
         switch (barbershop->status_of_barber) {
             case IDLE:

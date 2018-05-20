@@ -58,7 +58,7 @@ void take_barbers_chair() {
     } else if (status == JUST_ARRIVED) {
         while (1) {
             release_sem(semaphore);
-            get_sem(semaphore);
+            take_sem(semaphore);
             if (barbershop->status_of_barber == READY_FOR_SHAVING) break;
         }
         status = INVITED;
@@ -74,7 +74,7 @@ void trigger_barbers_client(int number_of_shaves) {
     while (cuts_already_done < number_of_shaves) {
         status = JUST_ARRIVED;
 
-        get_sem(semaphore);
+        take_sem(semaphore);
 
         if (barbershop->status_of_barber == SLEEPING_INACTIVE) {
             printf("%lo #%i: woke up the barber\n", current_time(), current_client_pid);
@@ -93,7 +93,7 @@ void trigger_barbers_client(int number_of_shaves) {
         release_sem(semaphore);
 
         while(status < INVITED) {
-            get_sem(semaphore);
+            take_sem(semaphore);
             if (barbershop->current_client == current_client_pid) {
                 status = INVITED;
                 take_barbers_chair();
@@ -103,7 +103,7 @@ void trigger_barbers_client(int number_of_shaves) {
         }
 
         while(status < SHAVED) {
-            get_sem(semaphore);
+            take_sem(semaphore);
             if (barbershop->current_client != current_client_pid) {
                 status = SHAVED;
                 printf("%lo #%i: shaved\n", current_time(), current_client_pid);

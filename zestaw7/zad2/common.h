@@ -47,7 +47,7 @@ long current_time() {
 }
 
 
-void get_sem(sem_t *semaphore) {
+void take_sem(sem_t *semaphore) {
     int error = sem_wait(semaphore);
     if (error == -1) FAIL("Semaphore error: %s", strerror(errno))
 }
