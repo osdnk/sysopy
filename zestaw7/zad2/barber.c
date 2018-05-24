@@ -41,7 +41,9 @@ void shave() {
 }
 
 void clean_memory() {
+    sem_close(semaphore);
     if (semaphore != 0) sem_unlink(PROJECT_PATH);
+    munmap(barbershop, sizeof(barbershop));
     if (shared_memory_fd != 0) shm_unlink(PROJECT_PATH);
 }
 

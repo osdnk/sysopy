@@ -37,6 +37,7 @@ void shave() {
 }
 
 void clean_memory() {
+    shmdt(barbershop);
     if(sem_id != 0) {
         semctl(sem_id, 0, IPC_RMID);
     }
