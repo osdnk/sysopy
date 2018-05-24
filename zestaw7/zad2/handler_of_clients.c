@@ -28,11 +28,6 @@ void initialize_clients() {
     if (shared_memory_fd == -1)
         FAIL("Couldn't create shared memory\n")
 
-    // Truncate file
-    int error = ftruncate(shared_memory_fd, sizeof(*barbershop));
-
-    if (error == -1)
-        FAIL("Failed truncating file\n");
 
     barbershop = mmap(NULL,
                       sizeof(*barbershop),
@@ -44,7 +39,7 @@ void initialize_clients() {
     if (barbershop == (void*) -1)
         FAIL("Couldn't access shared memory\n")
 
-    semaphore = sem_open(PROJECT_PATH, O_WRONLY, S_IRWXU | S_IRWXG, 0);
+    semaphore = sem_open(PROJECT_PATH, O_WRONLY);
 
     if (semaphore == (void*) -1)
         FAIL("Couldn't create semaphore\n")

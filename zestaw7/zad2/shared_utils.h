@@ -13,7 +13,7 @@
     exit(-1);                                                                  }
 
 
-#define PROJECT_PATH "/barbershop10"
+#define PROJECT_PATH "/xC000FFEE"
 
 #define BARBER_MAX_QUEUE_SIZE 64
 
