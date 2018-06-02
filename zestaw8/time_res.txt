@@ -1,0 +1,128 @@
+threads: 1
+Real:   0.04 s   User:   0.03 s   System: 0.00 s
+
+
+threads: 2
+Real:   0.01 s   User:   0.02 s   System: 0.00 s
+
+
+threads: 4
+Real:   0.02 s   User:   0.04 s   System: 0.00 s
+
+
+threads: 8
+Real:   0.01 s   User:   0.04 s   System: 0.00 s
+
+
+threads: 1
+Real:   0.04 s   User:   0.04 s   System: 0.00 s
+
+
+threads: 2
+Real:   0.02 s   User:   0.03 s   System: 0.00 s
+
+
+threads: 4
+Real:   0.02 s   User:   0.04 s   System: 0.00 s
+
+
+threads: 8
+Real:   0.01 s   User:   0.05 s   System: 0.00 s
+
+
+threads: 1
+Real:   0.10 s   User:   0.10 s   System: 0.00 s
+
+
+threads: 2
+Real:   0.05 s   User:   0.10 s   System: 0.00 s
+
+
+threads: 4
+Real:   0.05 s   User:   0.16 s   System: 0.00 s
+
+
+threads: 8
+Real:   0.05 s   User:   0.15 s   System: 0.00 s
+
+
+threads: 1
+Real:   2.46 s   User:   2.46 s   System: 0.00 s
+
+
+threads: 2
+Real:   1.27 s   User:   2.53 s   System: 0.00 s
+
+
+threads: 4
+Real:   1.07 s   User:   4.15 s   System: 0.00 s
+
+
+threads: 8
+Real:   1.07 s   User:   4.16 s   System: 0.00 s
+
+
+threads: 1
+Real:   8.22 s   User:   8.19 s   System: 0.02 s
+
+
+threads: 2
+Real:   4.24 s   User:   8.45 s   System: 0.00 s
+
+
+threads: 4
+Real:   3.78 s   User:   13.89 s   System: 0.01 s
+
+
+threads: 8
+Real:   3.73 s   User:   13.85 s   System: 0.05 s
+
+
+threads: 1
+Real:   0.04 s   User:   0.04 s   System: 0.00 s
+
+
+threads: 2
+Real:   0.02 s   User:   0.03 s   System: 0.00 s
+
+
+threads: 4
+Real:   0.01 s   User:   0.05 s   System: 0.00 s
+
+
+threads: 8
+Real:   0.01 s   User:   0.04 s   System: 0.00 s
+
+
+threads: 1
+Real:   0.09 s   User:   0.10 s   System: 0.00 s
+
+
+threads: 2
+Real:   0.06 s   User:   0.11 s   System: 0.00 s
+
+
+threads: 4
+Real:   0.04 s   User:   0.16 s   System: 0.00 s
+
+
+threads: 8
+Real:   0.05 s   User:   0.15 s   System: 0.00 s
+
+
+threads: 1
+Real:   8.31 s   User:   8.30 s   System: 0.00 s
+
+
+threads: 2
+Real:   4.24 s   User:   8.45 s   System: 0.00 s
+
+
+threads: 4
+Real:   3.77 s   User:   13.28 s   System: 0.43 s
+
+
+threads: 8
+Real:   3.74 s   User:   13.79 s   System: 0.05 s
+
+
