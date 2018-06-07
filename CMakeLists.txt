@@ -33,5 +33,7 @@ add_executable(sysopy
         zestaw7/zad2/barber.c
         zestaw7/zad2/handler_of_clients.c
         zestaw7/zad2/shared_utils.h
+        zestaw8/main.c
+
 
         )

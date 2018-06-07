@@ -19,23 +19,16 @@ const int buff_size = 512;
 typedef struct thread_info {
     int b;
     int e;
-    int w;
-    int h;
-    int filter_size;
-    int **picture;
-    double **filter;
-    int **result;
  } thread_info;
 
-void save_picture(int width, int heigth, int **out_pict_matrix, FILE *fp) {
+void save_picture(int w, int h, int **out_pict_matrix, FILE *fp) {
     char buff[1024];
     fprintf(fp, "P2\n");
-    fprintf(fp, "%d %d\n", width, heigth);
+    fprintf(fp, "%d %d\n", w, h);
     fprintf(fp, "%d\n", 255);
-    for (int i = 0; i < heigth; i++) {
-        for (int j = 0; j < width; j++) {
-
-            if (j < width - 1) {
+    for (int i = 0; i < h; i++) {
+        for (int j = 0; j < w; j++) {
+            if (j < w - 1) {
                 sprintf(buff, "%d ", out_pict_matrix[i][j]);
             } else {
                 sprintf(buff, "%d\n", out_pict_matrix[i][j]);
@@ -47,51 +40,41 @@ void save_picture(int width, int heigth, int **out_pict_matrix, FILE *fp) {
 
 
 
-double time_diff(clock_t start, clock_t end) {
-    return (double) (end - start) / sysconf(_SC_CLK_TCK);
+clock_t sub_time(clock_t start, clock_t end) {
+    return (end - start) / sysconf(_SC_CLK_TCK);
 }
 
-void save_time_res(clock_t r_time[2], struct tms tms_time[2], int threads) {
-    FILE *fp = fopen("time_res.txt", "a");
-    fprintf(fp, "threads: %d\n", threads);
-    fprintf(fp, "Real:   %.2lf s   ", time_diff(r_time[0], r_time[1]));
+void add_results_to_file(clock_t *r_time, struct tms *ttime, int number_of_threads) {
+    FILE *fp = fopen("results", "a");
+    fprintf(fp, "\n\nNumber of number_of_threads: %d\n", number_of_threads);
+    fprintf(fp, "Real:   %.2lf s   ", (double)sub_time(r_time[0], r_time[1]));
     fprintf(fp, "User:   %.2lf s   ",
-            time_diff(tms_time[0].tms_utime, tms_time[1].tms_utime));
+            (double)sub_time(ttime[0].tms_utime, ttime[1].tms_utime));
     fprintf(fp, "System: %.2lf s\n",
-            time_diff(tms_time[0].tms_stime, tms_time[1].tms_stime));
+            (double)sub_time(ttime[0].tms_stime, ttime[1].tms_stime));
     fprintf(fp, "\n\n");
     fclose(fp);
 }
 
 
-int calc_pixel(int x, int y, int width, int heigth, int c, int **I,
-               double **K) {
-    double pixel_val = 0;
+int single_pixel(int x, int y, int w, int h, int c, int **I,
+                 double **K) {
+    double px = 0;
     for (int j = 0; j < c; j++) {
         int b = (int) round(fmax(0, y - ceil((double) c / 2) + j));
-        b = b < heigth ? b : heigth - 1;
+        b = b < h ? b : h - 1;
         for (int i = 0; i < c; i++) {
             int a = (int) round(fmax(0, x - ceil((double) c / 2) + i));
-            a = a < width ? a : width - 1;
+            a = a < w ? a : w - 1;
             double v = I[b][a] * K[j][i];
-            pixel_val += v;
+            px += v;
         }
     }
-    pixel_val = pixel_val < 0 ? 0 : pixel_val;
-    return (int) round(pixel_val);
+    px = px < 0 ? 0 : px;
+    return (int) round(px);
 }
 
 
-void *single_thread(void *infos) {
-    struct thread_info *thread_infos = (struct thread_info *) infos;
-    for (int y = 0; y < thread_infos->h; y++)
-        for (int x = thread_infos->b; x < thread_infos->e; x++) {
-            thread_infos->result[y][x] = calc_pixel(x, y, thread_infos->w, thread_infos->h, thread_infos->filter_size, thread_infos->picture, thread_infos->filter);
-        }
-
-    return (void *) 0;
-
-}
 
 
 int main(int argc, char **argv) {
@@ -195,15 +178,22 @@ int main(int argc, char **argv) {
 
     for (int i = 0; i < number_of_threads; i++) {
         threads_info[i] = malloc(sizeof(struct thread_info));
-        threads_info[i]->h = h;
-        threads_info[i]->w = w;
-        threads_info[i]->filter_size = filter_size;
         threads_info[i]->b = (i * w / number_of_threads);
         threads_info[i]->e = ((i + 1) * w / number_of_threads);
-        threads_info[i]->result = result_picture;
-        threads_info[i]->picture = picture;
-        threads_info[i]->filter = filter;
     }
+
+    void *single_thread(void *infos) {
+        struct thread_info *thread_infos = (struct thread_info *) infos;
+        for (int y = 0; y <h; y++)
+            for (int x = thread_infos->b; x < thread_infos->e; x++) {
+                result_picture[y][x] = single_pixel(x, y, w, h, filter_size,
+                                                          picture, filter);
+            }
+
+        return (void *) 0;
+
+    }
+
 
 
     for (int i = 0; i < number_of_threads; i++) {
@@ -220,7 +210,7 @@ int main(int argc, char **argv) {
     r_time[1] = times(&tms_time[1]);
 
     save_picture(w, h, result_picture, file_out);
-    save_time_res(r_time, tms_time, number_of_threads);
+    add_results_to_file(r_time, tms_time, number_of_threads);
 
     for (int i = 0; i < h; i++) {
         free(picture[i]);

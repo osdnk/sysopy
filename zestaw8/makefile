@@ -17,10 +17,10 @@ test:
 	./main 4 "./melon.pgm" "./edge_detection.txt" "./melon_4.pgm"
 	./main 8 "./melon.pgm" "./edge_detection.txt" "./melon_8.pgm"
 
-	./main 1 "./elephant.pgm" "./elephant.txt" "./elephant_1.pgm"
-	./main 2 "./elephant.pgm" "./elephant.txt" "./elephant_2.pgm"
-	./main 4 "./elephant.pgm" "./elephant.txt" "./elephant_4.pgm"
-	./main 8 "./elephant.pgm" "./elephant.txt" "./elephant_8.pgm"
+	./main 1 "./melon.pgm" "./elephant.txt" "./elephant_1.pgm"
+	./main 2 "./melon.pgm" "./elephant.txt" "./elephant_2.pgm"
+	./main 4 "./melon.pgm" "./elephant.txt" "./elephant_4.pgm"
+	./main 8 "./melon.pgm" "./elephant.txt" "./elephant_8.pgm"
 	
 	
 
