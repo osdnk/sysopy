@@ -182,7 +182,7 @@ semop(sem_id, sops, 1);
 sem_t *my_semaphore=sem_open(SEM_NAME, O_RDWR | O_CREAT, S_IRWXU, 1);
 
 sem_wait(my_semaphore);
-sem_post(my_semaphore);
+sem_post(my_semaphore)K
 
 sem_close(my_semaphore);
 sem_unlink(SEM_NAME);
@@ -208,3 +208,51 @@ pthread_join(arr[i], NULL);
 
 // MUTEX
 
+
+
+int x;
+pthread_mutex_t x_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+void my_thread_safe_function(...) {
+    /* Każdy dostęp do zmiennej x powinien się odbywać w następujący sposób: */
+    pthread_mutex_lock(&x_mutex);
+    /* operacje na x... */
+    pthread_mutex_unlock(&x_mutex);
+}
+
+
+
+int x,y;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond   = PTHREAD_COND_INITIALIZER;
+
+...
+k
+
+// (Watek 1)
+// Czekanie aż x jest większe od y jest
+// przeprowadzane następująco:
+
+pthread_mutex_lock(&mutex);
+while (x <= y) {
+pthread_cond_wait(&cond, &mutex);
+}
+
+...
+
+pthread_mutex_unlock(&mutex);
+
+...
+
+
+// (Watek 2)
+// Kazda modyfikacja x lub y może
+// powodować zmianę warunków. Należy
+// obudzić pozostałe wątki, które korzystają
+// z tego warunku sprawdzającego.
+
+pthread_mutex_lock(&mutex);
+/* zmiana x oraz y */
+if (x > y)
+pthread_cond_broadcast(&cond);
+pthread_mutex_unlock(&mutex);
